@@ -230,3 +230,6 @@ function fullscreen() {
         container.webkitRequestFullscreen();
     }
 }
+
+
+init();
