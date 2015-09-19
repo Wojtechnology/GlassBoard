@@ -9,7 +9,8 @@ var scene,
     context,
     lookingUp = false,
     lookingUpTimeout,
-    startAnimation = false;
+    startAnimation = false,
+    lastPos;
 
 var nextPowerOf2 = function(x){
     return Math.pow(2, Math.ceil(Math.log(x) / Math.log(2)));
@@ -64,6 +65,8 @@ var animate = function(){
             var pixels = data.data
             var colorOffset  = {red: 0, green: 1, blue: 2, alpha: 3};
             var blueones = [];
+
+            // increment by 16 for better performance
             for (var i = 0; i < pixels.length; i += 4) {
                 var r = pixels[i];
                 var g = pixels[i + 1];
@@ -96,17 +99,21 @@ var animate = function(){
                     blueones.push([(i / 4) % canvas.width, (i / 4) / canvas.width])
                 }
             }
-            var sum = [0, 0], avg = [0, 0];
+            var sum = [0, 0], pos = [0, 0];
             for (var i = 0; i < blueones.length; i++) {
                 sum[0] += blueones[i][0];
                 sum[1] += blueones[i][1];
             }
-            avg[0] = sum[0] / blueones.length;
-            avg[1] = sum[1] / blueones.length;
-            console.log(avg);
+            if (blueones.length > 0) {
+                pos[0] = sum[0] / blueones.length;
+                pos[1] = sum[1] / blueones.length;
+                lastPos = pos;
+            } else {
+                lastPos = null;
+            }
 
             context.fillStyle = 'rgba(255,255,255,255)'
-            context.fillRect(avg[0], avg[1], 20, 20);
+            context.fillRect(pos[0] - 20, pos[1] - 20, 40, 40)
         }
     }
 
