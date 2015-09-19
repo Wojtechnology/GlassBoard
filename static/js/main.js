@@ -217,7 +217,7 @@ var init = function(){
             texture = new THREE.Texture(canvas);
             texture.context = context;
 
-            var cameraPlane = new THREE.PlaneGeometry(960, 640);
+            var cameraPlane = new THREE.PlaneGeometry(1920, 1280);
 
             cameraMesh = new THREE.Mesh(cameraPlane, new THREE.MeshBasicMaterial({
                 color: 0xffffff, opacity: 1, map: texture
