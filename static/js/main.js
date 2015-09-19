@@ -9,7 +9,33 @@ var scene,
     context,
     lookingUp = false,
     lookingUpTimeout,
-    startAnimation = false;
+    startUpAnimation = false,
+    startDownAnimation = false,
+    initialY = -100,
+    currentY = initialY,
+    finalY = 100,
+    user = {
+        x: 500,
+        y: initialY,
+        radius: 50
+    },
+    messages = {
+        x: 900,
+        y: initialY,
+        radius: 50
+    },
+    email = {
+        x: 1100,
+        y: initialY,
+        radius: 50
+    },
+    news = {
+        x: 1300,
+        y: initialY,
+        radius: 50
+    },
+    icons = [user, messages, email, news],
+    animationSpeed = 20;
 
 var nextPowerOf2 = function(x){
     return Math.pow(2, Math.ceil(Math.log(x) / Math.log(2)));
@@ -52,10 +78,49 @@ var animate = function(){
     if (context) {
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        if (startAnimation || lookingUp) {
-            startAnimation = true;
+        if (startUpAnimation) {
+            currentY += animationSpeed;
 
+            // End of the animation.
+            if (currentY >= finalY) {
+                startUpAnimation = false;
+                // Create a timeout to go back up.
+                if (lookingUpTimeout) {
+                    clearTimeout(lookingUpTimeout);
+                }
+
+                lookingUpTimeout = setTimeout(function() {
+                    startDownAnimation = true;
+                }, 5000);
+            }
         }
+        else if (startDownAnimation) {
+            currentY -= animationSpeed;
+
+            // End.
+            if (currentY <= initialY) {
+                startDownAnimation = false;
+            }
+        }
+        // else if (!lookingUp) {
+        //     if (lookingUpTimeout) {
+        //         clearTimeout(lookingUpTimeout);
+        //     }
+
+        //     lookingUpTimeout = setTimeout(function() {
+        //         lookingUp = false;
+        //     }, 4000);
+        //     currentY = initialY;
+        // }
+
+        icons.forEach(function(icon){
+            // User picture
+            context.beginPath();
+            context.arc(icon.x, currentY, icon.radius, 0, 2 * Math.PI, false);
+            context.fillStyle = 'white';
+            context.fill();
+        });
+
 
         if (video.readyState === video.HAVE_ENOUGH_DATA) {
             texture.needsUpdate = true;
@@ -81,15 +146,7 @@ var init = function(){
 
     if (window.DeviceOrientationEvent) {
         window.addEventListener('deviceorientation', function(evt){
-            lookingUp = evt.gamma > 20;
-
-            if (lookingUpTimeout) {
-                clearTimeout(lookingUpTimeout);
-            }
-
-            lookingUpTimeout = setTimeout(function() {
-                lookingUp = false;
-            }, 4000);
+            startUpAnimation = evt.gamma > 20;
 
         }.bind(this));
     }
