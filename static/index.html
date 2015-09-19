@@ -17,7 +17,7 @@
                 top: 0;
                 z-index: 100;
             }
-            .icon{
+            #icons{
                 display: none;
             }
         </style>
@@ -25,14 +25,17 @@
     <body>
         <div id="webglviewer"></div>
 
-        <img id="msg" class="icon" src="./msg.png" />
-        <img id="email" class="icon" src="./email.png" />
-        <img id="news" class="icon" src="./news.png" />
+        <div id="icons">
+            <img id="msg" class="icon" src="./msg.png" />
+            <img id="email" class="icon" src="./email.png" />
+            <img id="news" class="icon" src="./news.png" />
+            <img id="user" class="icon" src="./user.png" />
+        </div>
+
 
         <script src="./js/three.min.js"></script>
         <script src="./js/StereoEffect.js"></script>
         <script src="./js/close-pixelate-canvas.js"></script>
-        <script src="./js/fabric.min.js"></script>
         <script src="./js/main.js"></script>
     </body>
 </html>

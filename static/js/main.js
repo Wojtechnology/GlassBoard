@@ -1,3 +1,4 @@
+
 var scene,
     camera,
     renderer,
@@ -15,17 +16,37 @@ var scene,
     currentY = initialY,
     finalY = 30,
     DEBUG = true,
+    profile,
     user = {
-        x: 50,
+        x: 10,
         y: initialY,
-        radius: 25,
-        initialY: -100,
-        currentY: -100,
-        offset: 20
+        width: 75,
+        height: 50,
+        offset: -5,
+        img: document.getElementById('user'),
+        opacity: 1,
+        customDraw: function(icon, context, currentY){
+            context.save();
+            context.scale(1.5, 1);
+            context.beginPath();
+            context.arc(icon.x + 35, currentY + 25 + icon.offset, 20, 0, Math.PI * 2, true);
+            context.closePath();
+            context.clip();
+
+            context.scale(1, 1);
+            context.drawImage(icon.img, icon.x, currentY + icon.offset, icon.width, icon.height);
+            context.scale(1.5, 1);
+
+            context.beginPath();
+            context.arc(0, 0, 20, 0, Math.PI * 2, true);
+            context.clip();
+            context.closePath();
+            context.restore();
+        }
     },
     messages = {
         img: document.getElementById('msg'),
-        x: 200,
+        x: 250,
         y: initialY,
         width: 75,
         height: 50,
@@ -44,15 +65,13 @@ var scene,
 
     email = {
         img: document.getElementById('email'),
-        x: 400,
+        x: 350,
         y: initialY,
         width: 75,
         height: 40,
-        initialY: -100,
-        currentY: -100,
         offset: 0
     },
-    icons = [user, messages, news, email],
+    icons = [user, messages, email],
     animationSpeed = 15;
 
 var nextPowerOf2 = function(x){
@@ -68,6 +87,10 @@ var resize = function(){
 
     renderer.setSize(width, height);
     effect.setSize(width, height);
+}
+
+var show = function(){
+    currentY = finalY;
 }
 
 var update = function(dt){
@@ -133,9 +156,12 @@ var animate = function(){
         }
 
         icons.forEach(function(icon){
-            if (icon.img) {
+            if (icon.customDraw){
+                icon.customDraw(icon, context, currentY);
+            }
+            else if (icon.img) {
                 // User picture
-                context.globalAlpha = 0.75;
+                context.globalAlpha = icon.opacity || 0.75;
                 context.drawImage(icon.img, icon.x, currentY + icon.offset, icon.width, icon.height);
                 context.globalAlpha = 1;
             }
@@ -307,27 +333,55 @@ var init = function(){
 };
 
 
-init();
+// init();
 
-// window.fbAsyncInit = function() {
-//     FB.init({
-//         appId      : '900420250028280',
-//         xfbml      : true,
-//         version    : 'v2.4'
-//     });
+window.fbAsyncInit = function() {
+    FB.init({
+        appId      : '900420250028280',
+        xfbml      : true,
+        version    : 'v2.4'
+    });
 
-//     FB.login(function(authRes){
-//         console.log(authRes);
-//         // FB.api('me/inbox', 'get',  function(res){
-//         //     console.log(res);
-//         // });
-//     }, {scope: 'email,user_likes,manage_notifications'});
-// };
+    FB.login(function(authRes){
+        FB.api('me?fields=picture', 'get',  function(res){
+            if (res.error) {
+                alert('Problem fetching facebook picture.');
+                return init();
+            }
+            profile = res.picture.data.url;
 
-// (function(d, s, id){
-//     var js, fjs = d.getElementsByTagName(s)[0];
-//     if (d.getElementById(id)) {return;}
-//     js = d.createElement(s); js.id = id;
-//     js.src = "//connect.facebook.net/en_US/sdk.js";
-//     fjs.parentNode.insertBefore(js, fjs);
-// }(document, 'script', 'facebook-jssdk'));
+            // Download profile picture locally as canvas blocks
+            // cross origin content.
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', profile, true);
+
+            xhr.responseType = 'blob';
+
+            xhr.onload = function(e) {
+               if (this.status == 200) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        var img = document.getElementById('user');
+                        img.setAttribute('src', e.target.result);
+                        user.img = img;
+                        init();
+                    };
+                    reader.readAsDataURL(this.response);
+                }
+                else {
+                    init();
+                }
+            }
+
+            xhr.send();
+        });
+    });
+};
+
+(function(d, s, id){
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {return;}
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
