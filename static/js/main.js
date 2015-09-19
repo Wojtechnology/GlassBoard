@@ -9,7 +9,8 @@ var scene,
     context,
     lookingUp = false,
     lookingUpTimeout,
-    startAnimation = false;
+    startAnimation = false,
+    detector;
 
 var nextPowerOf2 = function(x){
     return Math.pow(2, Math.ceil(Math.log(x) / Math.log(2)));
@@ -58,6 +59,31 @@ var animate = function(){
         }
 
         if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            if (video.videoWidth > 0) {
+                if (!detector) {
+                    var width = video.videoWidth;
+                    var height = video.videoHeight;
+                    detector = new objectdetect.detector(width, height, 1.1, objectdetect.handfist);
+                }
+
+                // Third parameter is the step, increase for higher performance but lower accuracy
+                var coords = detector.detect(video, 1, 4);
+
+                if (coords[0]) {
+                    var coord = coords[0];
+
+                    coord[0] *= canvas.width / detector.canvas.width;
+                    coord[1] *= canvas.height / detector.canvas.height;
+                    coord[2] *= canvas.width / detector.canvas.width;
+                    coord[3] *= canvas.height / detector.canvas.height;
+
+                    context.beginPath();
+                    context.lineWidth = '2';
+                    context.fillStyle = 'rgba(0, 255, 255, 0.5)';
+                    context.fillRect(coord[0], coord[1], coord[2], coord[3]);
+                    context.stroke();
+                }
+            }
             texture.needsUpdate = true;
         }
     }
