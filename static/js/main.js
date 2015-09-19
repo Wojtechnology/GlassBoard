@@ -91,6 +91,9 @@ var animate = function(){
                     clearTimeout(lookingUpTimeout);
                 }
 
+                if (DEBUG)
+                    console.log('Set timeout');
+
                 lookingUpTimeout = setTimeout(function() {
                     startDownAnimation = true;
                 }, 5000);
@@ -151,7 +154,7 @@ var init = function(){
         window.addEventListener('deviceorientation', function(evt){
             if (DEBUG)
                 console.log(evt.gamma, currentY, initialY);
-            startUpAnimation = evt.gamma > 20 && currentY <= initialY;
+            startUpAnimation = evt.gamma < 70 && currentY <= initialY;
 
         }.bind(this));
     }
