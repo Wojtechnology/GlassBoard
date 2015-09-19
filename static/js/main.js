@@ -13,35 +13,46 @@ var scene,
     startDownAnimation = false,
     initialY = -100,
     currentY = initialY,
-    finalY = 50,
+    finalY = 30,
     DEBUG = true,
     user = {
         x: 50,
         y: initialY,
-        radius: 25
+        radius: 25,
+        initialY: -100,
+        currentY: -100,
+        offset: 20
     },
     messages = {
         img: document.getElementById('msg'),
         x: 200,
         y: initialY,
         width: 75,
-        height: 50
-    },
-    email = {
-        img: document.getElementById('email'),
-        x: 300,
-        y: initialY,
-        width: 75,
-        height: 40
+        height: 50,
+        offset: 0
     },
     news = {
         img: document.getElementById('news'),
+        x: 300,
+        y: initialY,
+        width: 75,
+        height: 40,
+        initialY: -100,
+        currentY: -100,
+        offset: 0
+    },
+
+    email = {
+        img: document.getElementById('email'),
         x: 400,
         y: initialY,
         width: 75,
-        height: 40
+        height: 40,
+        initialY: -100,
+        currentY: -100,
+        offset: 0
     },
-    icons = [user, messages, email, news],
+    icons = [user, messages, news, email],
     animationSpeed = 15;
 
 var nextPowerOf2 = function(x){
@@ -163,29 +174,19 @@ var animate = function(){
                 startDownAnimation = false;
             }
         }
-        // else if (!lookingUp) {
-        //     if (lookingUpTimeout) {
-        //         clearTimeout(lookingUpTimeout);
-        //     }
-
-        //     lookingUpTimeout = setTimeout(function() {
-        //         lookingUp = false;
-        //     }, 4000);
-        //     currentY = initialY;
-        // }
 
         icons.forEach(function(icon){
             if (icon.img) {
                 // User picture
                 context.globalAlpha = 0.75;
-                context.drawImage(icon.img, icon.x, currentY, icon.width, icon.height);
+                context.drawImage(icon.img, icon.x, currentY + icon.offset, icon.width, icon.height);
                 context.globalAlpha = 1;
             }
             else {
                 // User picture
                 context.globalAlpha = 0.75;
                 context.beginPath();
-                context.arc(icon.x, currentY, icon.radius, 0, 2 * Math.PI, false);
+                context.arc(icon.x, currentY + icon.offset, icon.radius, 0, 2 * Math.PI, false);
                 context.fillStyle = 'white';
                 context.fill();
                 context.globalAlpha = 1;
