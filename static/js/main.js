@@ -173,10 +173,10 @@ var init = function(){
 
     var options = {
         video: {
-            // mandatory: {
-            //     maxHeight: 1440,
-            //     maxWidth: 1280
-            // },
+            mandatory: {
+                maxHeight: 640,
+                maxWidth: 960
+            },
             optional: [{facingMode: "environment"}]
         }
     };
