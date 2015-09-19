@@ -7,9 +7,8 @@ var scene,
     video,
     canvas,
     context,
-    themes = ['blackandwhite', 'sepia', 'arcade', 'inverse'],
-    currentTheme = 0,
-    lookingAtGround = false;
+    lookingUp = false,
+    lookingUpTimeout;
 
 var nextPowerOf2 = function(x){
     return Math.pow(2, Math.ceil(Math.log(x) / Math.log(2)));
@@ -164,6 +163,22 @@ var init = function(){
     container = document.getElementById('webglviewer');
     container.appendChild(element);
 
+    if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', function(evt){
+            console.log(evt.beta);
+            lookingUp = evt.beta > 1;
+
+            if (lookingUpTimeout) {
+                clearTimeout(lookingUpTimeout);
+            }
+
+            lookingUpTimeout = setTimeout(function() {
+                lookingUp = false;
+            }, 4000);
+
+        }.bind(this));
+    }
+
     effect = new THREE.StereoEffect(renderer);
 
     element.addEventListener('click', fullscreen, false);
@@ -230,25 +245,29 @@ var init = function(){
     animate();
 };
 
-window.fbAsyncInit = function() {
-    FB.init({
-        appId      : '900420250028280',
-        xfbml      : true,
-        version    : 'v2.4'
-    });
 
-    FB.login(function(authRes){
-        console.log(authRes);
-        // FB.api('me/inbox', 'get',  function(res){
-        //     console.log(res);
-        // });
-    }, {scope: 'email,user_likes,manage_notifications'});
-};
+init();
 
-(function(d, s, id){
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) {return;}
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/en_US/sdk.js";
-    fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
+
+// window.fbAsyncInit = function() {
+//     FB.init({
+//         appId      : '900420250028280',
+//         xfbml      : true,
+//         version    : 'v2.4'
+//     });
+
+//     FB.login(function(authRes){
+//         console.log(authRes);
+//         // FB.api('me/inbox', 'get',  function(res){
+//         //     console.log(res);
+//         // });
+//     }, {scope: 'email,user_likes,manage_notifications'});
+// };
+
+// (function(d, s, id){
+//     var js, fjs = d.getElementsByTagName(s)[0];
+//     if (d.getElementById(id)) {return;}
+//     js = d.createElement(s); js.id = id;
+//     js.src = "//connect.facebook.net/en_US/sdk.js";
+//     fjs.parentNode.insertBefore(js, fjs);
+// }(document, 'script', 'facebook-jssdk'));
