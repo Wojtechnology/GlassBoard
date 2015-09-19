@@ -205,8 +205,8 @@ var init = function(){
             video.setAttribute('autoplay', true);
             document.body.appendChild(video);
             video.src = URL.createObjectURL(stream);
-            video.style.width = '1920px';
-            video.style.height = '1280px';
+            video.style.width = '960px';
+            video.style.height = '640px';
             video.play();
 
             canvas = document.createElement('canvas');
@@ -217,7 +217,7 @@ var init = function(){
             texture = new THREE.Texture(canvas);
             texture.context = context;
 
-            var cameraPlane = new THREE.PlaneGeometry(1920, 1280);
+            var cameraPlane = new THREE.PlaneGeometry(960, 640);
 
             cameraMesh = new THREE.Mesh(cameraPlane, new THREE.MeshBasicMaterial({
                 color: 0xffffff, opacity: 1, map: texture
