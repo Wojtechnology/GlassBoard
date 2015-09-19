@@ -21,19 +21,25 @@ var scene,
         radius: 25
     },
     messages = {
+        img: document.getElementById('msg'),
         x: 100,
         y: initialY,
-        radius: 25
+        width: 50,
+        height: 50
     },
     email = {
+        img: document.getElementById('email'),
         x: 150,
         y: initialY,
-        radius: 25
+        width: 50,
+        height: 50
     },
     news = {
+        img: document.getElementById('news'),
         x: 200,
         y: initialY,
-        radius: 25
+        width: 50,
+        height: 50
     },
     icons = [user, messages, email, news],
     animationSpeed = 15;
@@ -126,13 +132,21 @@ var animate = function(){
         // }
 
         icons.forEach(function(icon){
-            // User picture
-            context.globalAlpha = 0.5;
-            context.beginPath();
-            context.arc(icon.x, currentY, icon.radius, 0, 2 * Math.PI, false);
-            context.fillStyle = 'white';
-            context.fill();
-            context.globalAlpha = 1;
+            if (icon.img) {
+                // User picture
+                context.globalAlpha = 0.75;
+                context.drawImage(icon.img, icon.x, icon.y, icon.width, icon.height);
+                context.globalAlpha = 1;
+            }
+            else {
+                // User picture
+                context.globalAlpha = 0.75;
+                context.beginPath();
+                context.arc(icon.x, currentY, icon.radius, 0, 2 * Math.PI, false);
+                context.fillStyle = 'white';
+                context.fill();
+                context.globalAlpha = 1;
+            }
         });
 
 
