@@ -22,24 +22,24 @@ var scene,
     },
     messages = {
         img: document.getElementById('msg'),
-        x: 100,
+        x: 200,
         y: initialY,
-        width: 50,
+        width: 75,
         height: 50
     },
     email = {
         img: document.getElementById('email'),
-        x: 150,
+        x: 300,
         y: initialY,
-        width: 50,
-        height: 50
+        width: 75,
+        height: 40
     },
     news = {
         img: document.getElementById('news'),
-        x: 200,
+        x: 400,
         y: initialY,
-        width: 50,
-        height: 50
+        width: 75,
+        height: 40
     },
     icons = [user, messages, email, news],
     animationSpeed = 15;
@@ -135,7 +135,7 @@ var animate = function(){
             if (icon.img) {
                 // User picture
                 context.globalAlpha = 0.75;
-                context.drawImage(icon.img, icon.x, icon.y, icon.width, icon.height);
+                context.drawImage(icon.img, icon.x, currentY, icon.width, icon.height);
                 context.globalAlpha = 1;
             }
             else {
