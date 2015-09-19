@@ -148,7 +148,7 @@ var init = function(){
 
     if (window.DeviceOrientationEvent) {
         window.addEventListener('deviceorientation', function(evt){
-            startUpAnimation = evt.gamma > 20;
+            startUpAnimation = evt.gamma > 20 && currentY <= initialY;
 
         }.bind(this));
     }
