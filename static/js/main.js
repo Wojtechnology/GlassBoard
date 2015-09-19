@@ -14,6 +14,7 @@ var scene,
     initialY = -100,
     currentY = initialY,
     finalY = 100,
+    DEBUG = false,
     user = {
         x: 500,
         y: initialY,
@@ -148,6 +149,8 @@ var init = function(){
 
     if (window.DeviceOrientationEvent) {
         window.addEventListener('deviceorientation', function(evt){
+            if (DEBUG)
+                console.log(evt.gamma, currentY, initialY);
             startUpAnimation = evt.gamma > 20 && currentY <= initialY;
 
         }.bind(this));
