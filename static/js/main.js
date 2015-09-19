@@ -104,13 +104,10 @@ var animate = function(){
             var colorOffset  = {red: 0, green: 1, blue: 2, alpha: 3};
             var blueones = [];
 
-            // increment by 16 for better performance
-            for (var i = 0; i < 100 * 4 * canvas.height && i < pixels.length; i += 4) {
+            for (var i = 0; i < 120 * 4 * canvas.height && i < pixels.length; i += 4) {
                 var r = pixels[i];
                 var g = pixels[i + 1];
                 var b = pixels[i + 2];
-
-                var brightness = 0.2126 * r + 0.7152 * g + 0.0722 * b;
 
                 var checkr = 215;
                 var checkg = 90;
@@ -131,9 +128,16 @@ var animate = function(){
             if (blueones.length > 0) {
                 pos[0] = sum[0] / blueones.length;
                 pos[1] = sum[1] / blueones.length;
-                context.fillStyle = 'rgba(255,255,255,127)'
-                context.fillRect(pos[0] - 10, pos[1] - 10, 20, 20)
-                pos[1] = sum[1] / blueones.length;
+
+                // draw cursor
+                context.globalAlpha = 0.5;
+                context.beginPath();
+                context.arc(pos[0], pos[1], 5, 0, 2 * Math.PI, false);
+                context.fillStyle = 'rgba(100, 100, 255, 255)';
+                context.fill();
+                context.globalAlpha = 1;
+
+                lastPos = pos;
             } else {
                 lastPos = null;
             }
