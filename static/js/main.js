@@ -160,6 +160,7 @@ var init = function(){
         window.addEventListener('deviceorientation', function(evt){
             if (DEBUG)
                 console.log(evt.gamma, currentY, initialY);
+
             startUpAnimation = startUpAnimation || (evt.gamma < 70
                     && evt.gamma > 50 && currentY <= initialY);
 
@@ -172,6 +173,10 @@ var init = function(){
 
     var options = {
         video: {
+            // mandatory: {
+            //     maxHeight: 1440,
+            //     maxWidth: 1280
+            // },
             optional: [{facingMode: "environment"}]
         }
     };
@@ -200,13 +205,11 @@ var init = function(){
             video.setAttribute('autoplay', true);
             document.body.appendChild(video);
             video.src = URL.createObjectURL(stream);
-            video.style.width = '100%';
-            video.style.height = '100%';
+            video.style.width = ' 1280px';
+            video.style.height = '1440px';
             video.play();
 
             canvas = document.createElement('canvas');
-            canvas.width = video.clientWidth;
-            canvas.height = video.clientHeight;
             canvas.width = nextPowerOf2(canvas.width);
             canvas.height = nextPowerOf2(canvas.height);
 
@@ -214,7 +217,7 @@ var init = function(){
             texture = new THREE.Texture(canvas);
             texture.context = context;
 
-            var cameraPlane = new THREE.PlaneGeometry(1920, 1280);
+            var cameraPlane = new THREE.PlaneGeometry(1280, 1440);
 
             cameraMesh = new THREE.Mesh(cameraPlane, new THREE.MeshBasicMaterial({
                 color: 0xffffff, opacity: 1, map: texture
