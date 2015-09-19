@@ -160,7 +160,8 @@ var init = function(){
         window.addEventListener('deviceorientation', function(evt){
             if (DEBUG)
                 console.log(evt.gamma, currentY, initialY);
-            startUpAnimation = evt.gamma < 70 && currentY <= initialY;
+            startUpAnimation = startUpAnimation || (evt.gamma < 70
+                    && evt.gamma > 50 && currentY <= initialY);
 
         }.bind(this));
     }
