@@ -15,6 +15,39 @@ var nextPowerOf2 = function(x){
     return Math.pow(2, Math.ceil(Math.log(x) / Math.log(2)));
 };
 
+var resize = function(){
+    var width = container.offsetWidth;
+    var height = container.offsetHeight;
+
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(width, height);
+    effect.setSize(width, height);
+}
+
+var update = function(dt){
+    resize();
+
+    camera.updateProjectionMatrix();
+}
+
+var render = function(dt){
+    effect.render(scene, camera);
+}
+
+var fullscreen = function(){
+    if (container.requestFullscreen) {
+        container.requestFullscreen();
+    } else if (container.msRequestFullscreen) {
+        container.msRequestFullscreen();
+    } else if (container.mozRequestFullScreen) {
+        container.mozRequestFullScreen();
+    } else if (container.webkitRequestFullscreen) {
+        container.webkitRequestFullscreen();
+    }
+}
+
 var animate = function(){
     if (context) {
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -197,39 +230,24 @@ var init = function(){
     animate();
 };
 
+window.fbAsyncInit = function() {
+    FB.init({
+        appId      : '900420250028280',
+        xfbml      : true,
+        version    : 'v2.4'
+    });
 
-function resize() {
-    var width = container.offsetWidth;
-    var height = container.offsetHeight;
+    FB.login(function(){
+        FB.api('me/inbox', function(res){
+            console.log(res);
+        });
+    }, {scope: 'email,user_likes,read_mailbox'});
+};
 
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(width, height);
-    effect.setSize(width, height);
-}
-
-function update(dt) {
-    resize();
-
-    camera.updateProjectionMatrix();
-}
-
-function render(dt) {
-    effect.render(scene, camera);
-}
-
-function fullscreen() {
-    if (container.requestFullscreen) {
-        container.requestFullscreen();
-    } else if (container.msRequestFullscreen) {
-        container.msRequestFullscreen();
-    } else if (container.mozRequestFullScreen) {
-        container.mozRequestFullScreen();
-    } else if (container.webkitRequestFullscreen) {
-        container.webkitRequestFullscreen();
-    }
-}
-
-
-init();
+(function(d, s, id){
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {return;}
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
