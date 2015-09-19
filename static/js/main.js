@@ -14,7 +14,7 @@ var scene,
     initialY = -100,
     currentY = initialY,
     finalY = 100,
-    DEBUG = false,
+    DEBUG = true,
     user = {
         x: 500,
         y: initialY,
@@ -79,35 +79,35 @@ var animate = function(){
     if (context) {
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        // if (startUpAnimation) {
-        //     currentY += animationSpeed;
+        if (startUpAnimation) {
+            currentY += animationSpeed;
 
-        //     // End of the animation.
-        //     if (currentY >= finalY) {
-        //         currentY = finalY;
-        //         startUpAnimation = false;
-        //         // Create a timeout to go back up.
-        //         if (lookingUpTimeout) {
-        //             clearTimeout(lookingUpTimeout);
-        //         }
+            // End of the animation.
+            if (currentY >= finalY) {
+                currentY = finalY;
+                startUpAnimation = false;
+                // Create a timeout to go back up.
+                if (lookingUpTimeout) {
+                    clearTimeout(lookingUpTimeout);
+                }
 
-        //         if (DEBUG)
-        //             console.log('Set timeout');
+                if (DEBUG)
+                    console.log('Set timeout');
 
-        //         lookingUpTimeout = setTimeout(function() {
-        //             startDownAnimation = true;
-        //         }, 5000);
-        //     }
-        // }
-        // else if (startDownAnimation) {
-        //     currentY -= animationSpeed;
+                lookingUpTimeout = setTimeout(function() {
+                    startDownAnimation = true;
+                }, 5000);
+            }
+        }
+        else if (startDownAnimation) {
+            currentY -= animationSpeed;
 
-        //     // End.
-        //     if (currentY <= initialY) {
-        //         currentY = initialY;
-        //         startDownAnimation = false;
-        //     }
-        // }
+            // End.
+            if (currentY <= initialY) {
+                currentY = initialY;
+                startDownAnimation = false;
+            }
+        }
         // else if (!lookingUp) {
         //     if (lookingUpTimeout) {
         //         clearTimeout(lookingUpTimeout);
