@@ -80,10 +80,16 @@ var animate = function(){
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
         if (startUpAnimation) {
+            if (DEBUG) {
+                console.log('GOING DOWN!', currentY, animationSpeed);
+            }
             currentY += animationSpeed;
 
             // End of the animation.
             if (currentY >= finalY) {
+                if (DEBUG) {
+                    console.log('ENDING ANIMATION', currentY, finalY);
+                }
                 currentY = finalY;
                 startUpAnimation = false;
                 // Create a timeout to go back up.
