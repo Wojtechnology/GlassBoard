@@ -9,8 +9,7 @@ var scene,
     context,
     lookingUp = false,
     lookingUpTimeout,
-    startAnimation = false,
-    detector;
+    startAnimation = false;
 
 var nextPowerOf2 = function(x){
     return Math.pow(2, Math.ceil(Math.log(x) / Math.log(2)));
@@ -59,32 +58,55 @@ var animate = function(){
         }
 
         if (video.readyState === video.HAVE_ENOUGH_DATA) {
-            if (video.videoWidth > 0) {
-                if (!detector) {
-                    var width = video.videoWidth;
-                    var height = video.videoHeight;
-                    detector = new objectdetect.detector(width, height, 1.1, objectdetect.handfist);
-                }
+            texture.needsUpdate = true;
 
-                // Third parameter is the step, increase for higher performance but lower accuracy
-                var coords = detector.detect(video, 1, 4);
+            data = context.getImageData(0, 0, canvas.width, canvas.height);
+            var pixels = data.data
+            var colorOffset  = {red: 0, green: 1, blue: 2, alpha: 3};
+            var blueones = [];
+            for (var i = 0; i < pixels.length; i += 4) {
+                var r = pixels[i];
+                var g = pixels[i + 1];
+                var b = pixels[i + 2];
 
-                if (coords[0]) {
-                    var coord = coords[0];
-
-                    coord[0] *= canvas.width / detector.canvas.width;
-                    coord[1] *= canvas.height / detector.canvas.height;
-                    coord[2] *= canvas.width / detector.canvas.width;
-                    coord[3] *= canvas.height / detector.canvas.height;
-
-                    context.beginPath();
-                    context.lineWidth = '2';
-                    context.fillStyle = 'rgba(0, 255, 255, 0.5)';
-                    context.fillRect(coord[0], coord[1], coord[2], coord[3]);
-                    context.stroke();
+                var brightness = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                //if (prevg < 200)
+                //{
+                    //pixels[i + colorOffset.red] = prevpixels[i + colorOffset.red];
+                    //pixels[i + colorOffset.green] = prevpixels[i + colorOffset.green];
+                    //pixels[i + colorOffset.blue] = prevpixels[i + colorOffset.blue];
+                    ////pixels[i + colorOffset.alpha] = 1;
+                //}
+                //if (r > 50 && b > 50 && g < 200) {
+                    //pixels[i + colorOffset.red] = 0;
+                    //pixels[i + colorOffset.green] = 0;
+                    //pixels[i + colorOffset.blue] = 0;
+                    ////pixels[i + colorOffset.alpha] = 0;
+                //}
+                // Light blue bottle cap
+                var checkr = 30;
+                var checkg = 57;
+                var checkb = 115;
+                if (
+                    ( r > (checkr-25) && r < (checkr+25) ) &&
+                    ( g > (checkg-25) && g < (checkg+25) ) &&
+                    //( b > (checkb-25) && b < (checkb+25) )
+                    ( b > (checkb-25) )
+                ) {
+                    blueones.push([(i / 4) % canvas.width, (i / 4) / canvas.width])
                 }
             }
-            texture.needsUpdate = true;
+            var sum = [0, 0], avg = [0, 0];
+            for (var i = 0; i < blueones.length; i++) {
+                sum[0] += blueones[i][0];
+                sum[1] += blueones[i][1];
+            }
+            avg[0] = sum[0] / blueones.length;
+            avg[1] = sum[1] / blueones.length;
+            console.log(avg);
+
+            context.fillStyle = 'rgba(255,255,255,255)'
+            context.fillRect(avg[0], avg[1], 20, 20);
         }
     }
 
@@ -188,7 +210,6 @@ var init = function(){
 
 
 init();
-
 
 // window.fbAsyncInit = function() {
 //     FB.init({
