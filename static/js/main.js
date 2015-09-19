@@ -13,7 +13,7 @@ var scene,
     startDownAnimation = false,
     initialY = -100,
     currentY = initialY,
-    finalY = 100,
+    finalY = 50,
     DEBUG = true,
     user = {
         x: 50,
@@ -127,10 +127,12 @@ var animate = function(){
 
         icons.forEach(function(icon){
             // User picture
+            context.globalAlpha = 0.5;
             context.beginPath();
             context.arc(icon.x, currentY, icon.radius, 0, 2 * Math.PI, false);
             context.fillStyle = 'white';
             context.fill();
+            context.globalAlpha = 1;
         });
 
 
