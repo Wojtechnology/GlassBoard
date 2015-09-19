@@ -152,6 +152,60 @@ var animate = function(){
 
         if (video.readyState === video.HAVE_ENOUGH_DATA) {
             texture.needsUpdate = true;
+
+            data = context.getImageData(0, 0, canvas.width, canvas.height);
+            var pixels = data.data
+            var colorOffset  = {red: 0, green: 1, blue: 2, alpha: 3};
+            var blueones = [];
+
+            // increment by 16 for better performance
+            for (var i = 0; i < pixels.length; i += 4) {
+                var r = pixels[i];
+                var g = pixels[i + 1];
+                var b = pixels[i + 2];
+
+                var brightness = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                //if (prevg < 200)
+                //{
+                    //pixels[i + colorOffset.red] = prevpixels[i + colorOffset.red];
+                    //pixels[i + colorOffset.green] = prevpixels[i + colorOffset.green];
+                    //pixels[i + colorOffset.blue] = prevpixels[i + colorOffset.blue];
+                    ////pixels[i + colorOffset.alpha] = 1;
+                //}
+                //if (r > 50 && b > 50 && g < 200) {
+                    //pixels[i + colorOffset.red] = 0;
+                    //pixels[i + colorOffset.green] = 0;
+                    //pixels[i + colorOffset.blue] = 0;
+                    ////pixels[i + colorOffset.alpha] = 0;
+                //}
+                // Light blue bottle cap
+                var checkr = 30;
+                var checkg = 57;
+                var checkb = 115;
+                if (
+                    ( r > (checkr-25) && r < (checkr+25) ) &&
+                    ( g > (checkg-25) && g < (checkg+25) ) &&
+                    //( b > (checkb-25) && b < (checkb+25) )
+                    ( b > (checkb-25) )
+                ) {
+                    blueones.push([(i / 4) % canvas.width, (i / 4) / canvas.width])
+                }
+            }
+            var sum = [0, 0], pos = [0, 0];
+            for (var i = 0; i < blueones.length; i++) {
+                sum[0] += blueones[i][0];
+                sum[1] += blueones[i][1];
+            }
+            if (blueones.length > 0) {
+                pos[0] = sum[0] / blueones.length;
+                pos[1] = sum[1] / blueones.length;
+                lastPos = pos;
+            } else {
+                lastPos = null;
+            }
+
+            context.fillStyle = 'rgba(255,255,255,255)'
+            context.fillRect(pos[0] - 20, pos[1] - 20, 40, 40)
         }
     }
 
@@ -253,7 +307,6 @@ var init = function(){
 
 
 init();
-
 
 // window.fbAsyncInit = function() {
 //     FB.init({
