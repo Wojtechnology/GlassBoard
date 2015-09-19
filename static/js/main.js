@@ -148,7 +148,7 @@ var animate = function(){
 var init = function(){
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.001, 700);
-    camera.position.set(0, 15, 0);
+    camera.position.set(0, 15, 200);
     scene.add(camera);
 
     renderer = new THREE.WebGLRenderer();
@@ -205,8 +205,8 @@ var init = function(){
             video.setAttribute('autoplay', true);
             document.body.appendChild(video);
             video.src = URL.createObjectURL(stream);
-            video.style.width = '100%';
-            video.style.height = '100%';
+            video.style.width = '1920px';
+            video.style.height = '1280px';
             video.play();
 
             canvas = document.createElement('canvas');
@@ -217,7 +217,7 @@ var init = function(){
             texture = new THREE.Texture(canvas);
             texture.context = context;
 
-            var cameraPlane = new THREE.PlaneGeometry(1920, 1280);
+            var cameraPlane = new THREE.PlaneGeometry(960, 640);
 
             cameraMesh = new THREE.Mesh(cameraPlane, new THREE.MeshBasicMaterial({
                 color: 0xffffff, opacity: 1, map: texture
@@ -225,7 +225,7 @@ var init = function(){
 
             cameraMesh.position.z = -600;
 
-            scene.add(cameraMesh);
+            camera.add(cameraMesh);
 
         }, function(error){
             console.log('Stream error: ', error);
