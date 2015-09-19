@@ -237,10 +237,11 @@ window.fbAsyncInit = function() {
         version    : 'v2.4'
     });
 
-    FB.login(function(){
-        FB.api('me/inbox', function(res){
-            console.log(res);
-        });
+    FB.login(function(authRes){
+        console.log(authRes);
+        // FB.api('me/inbox', 'get',  function(res){
+        //     console.log(res);
+        // });
     }, {scope: 'email,user_likes,read_mailbox'});
 };
 
