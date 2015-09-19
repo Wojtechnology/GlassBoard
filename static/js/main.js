@@ -165,8 +165,8 @@ var init = function(){
 
     if (window.DeviceOrientationEvent) {
         window.addEventListener('deviceorientation', function(evt){
-            console.log(evt.beta);
-            lookingUp = evt.beta > 1;
+            console.log(evt.gamma);
+            lookingUp = evt.gamma > 1;
 
             if (lookingUpTimeout) {
                 clearTimeout(lookingUpTimeout);
