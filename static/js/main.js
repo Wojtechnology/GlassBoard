@@ -94,7 +94,7 @@ var animate = function(){
             var blueones = [];
 
             // increment by 16 for better performance
-            for (var i = 0; i < 100 * 4 * canvas.height; i += 4) {
+            for (var i = 0; i < 100 * 4 * canvas.height && i < pixels.length; i += 4) {
                 var r = pixels[i];
                 var g = pixels[i + 1];
                 var b = pixels[i + 2];
