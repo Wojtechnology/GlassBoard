@@ -223,7 +223,7 @@ var init = function(){
                 color: 0xffffff, opacity: 1, map: texture
             }));
 
-            cameraMesh.position.z = -700;
+            cameraMesh.position.z = -600;
 
             scene.add(cameraMesh);
 
