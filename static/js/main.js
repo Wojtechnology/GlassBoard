@@ -242,7 +242,7 @@ window.fbAsyncInit = function() {
         // FB.api('me/inbox', 'get',  function(res){
         //     console.log(res);
         // });
-    }, {scope: 'email,user_likes,read_mailbox'});
+    }, {scope: 'email,user_likes,manage_notifications'});
 };
 
 (function(d, s, id){
