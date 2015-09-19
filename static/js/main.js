@@ -83,6 +83,7 @@ var animate = function(){
 
             // End of the animation.
             if (currentY >= finalY) {
+                currentY = finalY;
                 startUpAnimation = false;
                 // Create a timeout to go back up.
                 if (lookingUpTimeout) {
@@ -99,6 +100,7 @@ var animate = function(){
 
             // End.
             if (currentY <= initialY) {
+                currentY = initialY;
                 startDownAnimation = false;
             }
         }
