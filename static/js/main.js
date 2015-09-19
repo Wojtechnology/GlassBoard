@@ -16,27 +16,27 @@ var scene,
     finalY = 100,
     DEBUG = true,
     user = {
-        x: 500,
+        x: 50,
         y: initialY,
-        radius: 50
+        radius: 25
     },
     messages = {
-        x: 900,
+        x: 100,
         y: initialY,
-        radius: 50
+        radius: 25
     },
     email = {
-        x: 1100,
+        x: 150,
         y: initialY,
-        radius: 50
+        radius: 25
     },
     news = {
-        x: 1300,
+        x: 200,
         y: initialY,
-        radius: 50
+        radius: 25
     },
     icons = [user, messages, email, news],
-    animationSpeed = 20;
+    animationSpeed = 15;
 
 var nextPowerOf2 = function(x){
     return Math.pow(2, Math.ceil(Math.log(x) / Math.log(2)));
