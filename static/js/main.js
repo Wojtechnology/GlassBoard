@@ -148,6 +148,8 @@ var animate = function(){
                     ( g > (checkg-25) && g < (checkg+25) ) &&
                     ( b > (checkb-25) && b < (checkb+25) )
                 ) {
+                    if (DEBUG)
+                        console.log('PINK PIXEL!');
                     blueones.push([(i / 4) % canvas.width, (i / 4) / canvas.width])
                 }
             }
@@ -161,9 +163,9 @@ var animate = function(){
                 pos[1] = sum[1] / blueones.length;
 
                 // draw cursor
-                context.globalAlpha = 0.5;
+                context.globalAlpha = 1;
                 context.beginPath();
-                context.arc(pos[0], pos[1], 5, 0, 2 * Math.PI, false);
+                context.arc(pos[0], pos[1], 10, 0, 2 * Math.PI, false);
                 context.fillStyle = 'rgba(100, 100, 255, 255)';
                 context.fill();
                 context.globalAlpha = 1;
@@ -351,9 +353,9 @@ var init = function(){
 
 window.fbAsyncInit = function() {
     FB.init({
-        appId      : '900420250028280',
-        xfbml      : true,
-        version    : 'v2.4'
+        appId: (window.location.host === 'localhost:3000') ? '900913696645602' : '900420250028280',
+        xfbml: true,
+        version: 'v2.4'
     });
 
     FB.login(function(authRes){
