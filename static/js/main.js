@@ -452,6 +452,7 @@ var animate = function(){
 
         // we cant click nything while an animation is running.\
         if (!animating) {
+
             for(var i = 0; i < buttons.length; i++){
                 var button = buttons[i];
                 // click handlers
@@ -471,6 +472,8 @@ var animate = function(){
                 }
             }
         }
+
+        animating = false;
     }
 
     requestAnimationFrame(animate);
