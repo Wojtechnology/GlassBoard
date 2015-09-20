@@ -13,20 +13,14 @@ var scene,
     finalY = 30,
     DEBUG = true,
     profile,
-    notifications = [],
+    notifications = [{
+        body: 'Yofammmmmm',
+        from: '6133848944'
+    }],
     cursor = {
         x: -1,
         y: -1,
         time: 0
-    },
-    openDialog = false,
-    dialogScale = 0,
-    dialog = {
-        text: notifications[0],
-        width: 420,
-        height: 150,
-        x: 50,
-        y: 50
     },
     user = {
         time: null,
@@ -113,7 +107,36 @@ var scene,
         lookingUpTimeout: null
     },
     icons = [user, messages, email],
-    animationSpeed = 15;
+    animationSpeed = 15,
+    replyButton = {
+        draw: function(context, pos){
+
+        },
+        clickHandler: function(){
+
+        },
+        x: 50,
+        y: 50,
+        width: 50,
+        height: 100,
+        time: null
+    },
+    buttons = [user, messages, email, replyButton],
+    openDialog = false,
+    dialogScale = 0,
+    dialog = {
+        text: notifications[0],
+        width: 420,
+        height: 150,
+        x: 50,
+        y: 50,
+        internalDraw: function(getDim, context, from, text){
+            var titleDim = getDim(20, 15);
+            context.font = '20px Arial';
+            context.fillStyle = '#000';
+            context.fillText(from, titleDim.x, titleDim.y);
+        }
+    };
 
 var nextPowerOf2 = function(x){
     return Math.pow(2, Math.ceil(Math.log(x) / Math.log(2)));
@@ -156,21 +179,9 @@ var fullscreen = function(){
     }
 }
 
-// fail - fn to run if icon doesnt intersect.
-var buttonIntersect = function(cursor, fail){
-    for (var i = 0; i < icons.length; i++) {
-        var icon = icons[i];
-        // In bounding rectangle of icon.
-        if (cursor.x && cursor.y && cursor.x > icon.x && cursor.x < icon.x + icon.width
-                && cursor.y > icon.y && cursor.y < icon.y + icon.height) {
-
-            return icon;
-        }
-        else if (fail) {
-            fail(icon);
-        }
-    }
-    return null;
+var buttonIntersect = function(button, cursor){
+    return (cursor.x && cursor.y && cursor.x > button.x && cursor.x < button.x + button.width
+                && cursor.y > button.y && cursor.y < button.y + button.height);
 };
 
 var doSetTimeout = function(icon) {
@@ -182,9 +193,12 @@ var doSetTimeout = function(icon) {
 }
 
 var animate = function(){
+    // whether or not we are in the process of an animation.
+    var animating = false;
     if (context) {
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
+        // image analysis.
         if (video.readyState === video.HAVE_ENOUGH_DATA) {
             texture.needsUpdate = true;
 
@@ -240,10 +254,13 @@ var animate = function(){
                 cursor.y = null;
             }
         }
+
+        // icon animations.
         for (var i = 0; i < icons.length; i++) {
             var icon = icons[i];
 
             if (icon.startUpAnimation) {
+                animating = true;
                 if (DEBUG) {
                     console.log('GOING DOWN!', icon.y, animationSpeed);
                 }
@@ -267,6 +284,7 @@ var animate = function(){
                 }
             }
             else if (icon.startDownAnimation) {
+                animating = true;
                 icon.y -= animationSpeed;
                 if (DEBUG) {
                     console.log('GOING UP!', icon.y, animationSpeed);
@@ -276,24 +294,6 @@ var animate = function(){
                 if (icon.y <= initialY) {
                     icon.y = initialY;
                     icon.startDownAnimation = false;
-                }
-            }
-            // If not animating check if cursor is on icon
-            else {
-                var intersectIcon = buttonIntersect(cursor, function(icon){
-                    icon.time = null;
-                });
-
-                if (intersectIcon) {
-                    if (!icon.time) {
-                        icon.time = new Date();
-                    }
-                    else if (new Date() - icon.time > 500 && icon.clickHandler) {
-                        if (DEBUG)
-                            console.log('CALLING HANDLER');
-                        icon.clickHandler();
-                        icon.time = null;
-                    }
                 }
             }
         }
@@ -321,32 +321,74 @@ var animate = function(){
             }
         });
 
-
         if (openDialog && dialog && dialogScale <= 1.0) {
+            animating = true;
             dialogScale += 0.1;
             if (dialogScale >= 1) {
                 dialogScale = 1;
             }
         }
         else if (!openDialog && dialog && dialogScale >= 0) {
+            animating = true;
             dialogScale -= 0.1;
             if (dialogScale <= 0) {
                 dialogScale = 0;
             }
         }
 
-        if (dialogScale > 0) {
+        if (dialogScale > 0 && notifications.length) {
             // context.reset();
             context.globalAlpha = 0.8;
             context.beginPath();
-            context.rect(dialog.x * dialogScale, dialog.y * dialogScale,
+            context.rect(dialog.x, dialog.y,
                     dialog.width * dialogScale, dialog.height * dialogScale);
             context.fillStyle = '#fff';
             context.fill();
             context.closePath();
             context.globalAlpha = 1;
+
+            dialog.internalDraw(function(x, y, width, height){
+                var output = {};
+                if (typeof x === 'number'){
+                    output.x = dialog.x + x;
+                }
+
+                if (typeof y === 'number'){
+                    output.y = dialog.y + y;
+                }
+
+                if (typeof width === 'number') {
+                    output.width = width*dialogScale;
+                }
+
+                if (typeof height === 'number') {
+                    output.height = height * dialogScale;
+                }
+
+                return output;
+            }, context, notifications[0].from, notifications[0].body);
         }
 
+        // we cant click nything while an animation is running.\
+        if (!animating) {
+            for(var i = 0; i < buttons.length; i++){
+                var button = buttons[i];
+                // click handlers
+                var intersect = buttonIntersect(button, cursor);
+
+                if (intersect) {
+                    if (!button.time) {
+                        button.time = new Date();
+                    }
+                    else if (new Date() - button.time > 500 && button.clickHandler) {
+                        if (DEBUG)
+                            console.log('CALLING HANDLER');
+                        button.clickHandler();
+                        button.time = null;
+                    }
+                }
+            }
+        }
     }
 
     requestAnimationFrame(animate);
