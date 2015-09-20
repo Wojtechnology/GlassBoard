@@ -452,12 +452,13 @@ var animate = function(){
 
         // we cant click nything while an animation is running.\
         if (!animating) {
+            console.log('checking buttons');
 
             for(var i = 0; i < buttons.length; i++){
                 var button = buttons[i];
                 // click handlers
                 var intersect = buttonIntersect(button, cursor);
-                console.log(intersect);
+                console.log('Intersect!', intersect);
 
                 if (intersect) {
                     if (!button.time) {
@@ -472,8 +473,9 @@ var animate = function(){
                 }
             }
         }
-
-        animating = false;
+        else{
+            console.log('NOOOO');
+        }
     }
 
     requestAnimationFrame(animate);
