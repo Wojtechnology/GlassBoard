@@ -409,6 +409,14 @@ var init = function(){
         });
     });
 
+    // connect to websocket
+    var socket = io();
+    socket.on('twilioincoming', function(msg){
+        console.log(msg);
+    });
+
+    socket.emit('twiliooutgoing', {'body' : 'Yofammmmmm', 'to' : '4163170133'});
+
     animate();
 };
 
