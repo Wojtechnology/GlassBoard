@@ -241,7 +241,7 @@ var scene,
             context.globalAlpha = 1;
 
         }
-    };
+    },
 
     dialog = {
         text: notifications[0],
@@ -282,7 +282,10 @@ var scene,
 
         }
     };
-n.continuous = true;
+
+var replyStart = function(done){
+    var recognition = new webkitSpeechRecognition();
+    recognition.continuous = true;
     recognition.interimResults = true;
     recognition.onresult = function(event) {
         console.log(event.results[0][0].transcript);
