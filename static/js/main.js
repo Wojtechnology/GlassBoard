@@ -353,24 +353,16 @@ var animate = function(){
 
             if (icon.startUpAnimation) {
                 animating = true;
-                if (DEBUG) {
-                    console.log('GOING DOWN!', icon.y, animationSpeed);
-                }
                 icon.y += animationSpeed;
 
                 // End of the animation.
                 if (icon.y >= finalY) {
-                    if (DEBUG) {
-                        console.log('ENDING ANIMATION', icon.y, finalY);
-                    }
                     icon.y = finalY;
                     icon.startUpAnimation = false;
                     // Create a timeout to go back up.
                     if (icon.lookingUpTimeout) {
                         clearTimeout(icon.lookingUpTimeout);
                     }
-                    if (DEBUG)
-                        console.log('Set timeout');
 
                     doSetTimeout(icon);
                 }
@@ -378,9 +370,6 @@ var animate = function(){
             else if (icon.startDownAnimation) {
                 animating = true;
                 icon.y -= animationSpeed;
-                if (DEBUG) {
-                    console.log('GOING UP!', icon.y, animationSpeed);
-                }
 
                 // End.
                 if (icon.y <= initialY) {
@@ -467,6 +456,7 @@ var animate = function(){
                 var button = buttons[i];
                 // click handlers
                 var intersect = buttonIntersect(button, cursor);
+                console.log(intersect);
 
                 if (intersect) {
                     if (!button.time) {
