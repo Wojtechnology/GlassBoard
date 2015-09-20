@@ -567,6 +567,18 @@ var init = function(){
         openDialog = true;
     });
 
+    var api = new FacePP('0ef14fa726ce34d820c5a44e57fef470', '4Y9YXOMSDvqu1Ompn9NSpNwWQFHs1hYD');
+    api.request('detection/detect', {
+        url: 'http://www.thenextgreatgeneration.com/wp-content/uploads/2011/07/s2-tbbt-cast-raj-01_595.jpg'
+    }, function(err, result) {
+        if (err) {
+            // TODO handle error
+            return;
+        }
+        // TODO use result
+        console.log(JSON.stringify(result, null, 2));
+    });
+
     // socket.emit('twiliooutgoing', {'body' : 'Yofammmmmm', 'to' : '4163170133'});
 
     animate();
