@@ -16,22 +16,15 @@ var scene,
     finalY = 30,
     DEBUG = true,
     profile,
+    notifications = ['TESTING'],
     cursor = {
         x: -1,
         y: -1,
         time: 0
     },
     openDialog = false,
+    dialog,
     user = {
-        clickHandler: function(){
-            startDownAnimation = true;
-            dialog = {
-                text: 'TESTING',
-                width: 100,
-                height: 100
-            };
-            openDialog = true;
-        },
         time: null,
         id: 'user',
         x: 10,
@@ -61,6 +54,17 @@ var scene,
         }
     },
     messages = {
+        clickHandler: function(){
+            if (notifications.length) {
+                startDownAnimation = true;
+                dialog = {
+                    text: notifications[0],
+                    width: 100,
+                    height: 100
+                };
+                openDialog = true;
+            }
+        },
         time: null,
         id: 'messages',
         img: document.getElementById('msg'),
