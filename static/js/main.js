@@ -29,6 +29,9 @@ var scene,
             if (openDialog) {
                 openDialog = false;
             }
+            if (replyOpen){
+                replyOpen = false;
+            }
         },
         time: null,
         id: 'cancel',
@@ -75,6 +78,7 @@ var scene,
     send = {
         clickHandler: function(){
             if (replyOpen) {
+                socket.emit('twiliooutgoing', {'body' : replyDialog.text, 'to' : notifications[0].from});
                 console.log('SEND');
             }
         },
