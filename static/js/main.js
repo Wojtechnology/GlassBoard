@@ -144,7 +144,6 @@ var animate = function(){
                 var checkg = 90;
                 var checkb = 110;
 
-                console.log('CHECKING');
                 if (
                     ( r > (checkr-25) ) &&
                     ( g > (checkg-25) && g < (checkg+25) ) &&
@@ -221,6 +220,7 @@ var animate = function(){
         else {
             for (var i = 0; i < icons.length; i++) {
                 var icon = icons[i];
+                console.log(cursor.x, cursor.y, icon.x, icon.y);
                 // In bounding rectangle of icon.
                 if (cursor.x > icon.x && cursor.x < icon.x + icon.width &&
                         cursor.y > icon.y && cursor.y < icon.y + icon.height) {
