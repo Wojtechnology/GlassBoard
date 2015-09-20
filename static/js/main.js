@@ -7,12 +7,9 @@ var scene,
     video,
     canvas,
     context,
+    socket = io(),
     lookingUp = false,
-    lookingUpTimeout,
-    startUpAnimation = false,
-    startDownAnimation = false,
     initialY = -100,
-    currentY = initialY,
     finalY = 30,
     DEBUG = true,
     profile,
@@ -41,16 +38,19 @@ var scene,
         offset: -5,
         img: document.getElementById('user'),
         opacity: 1,
+        startUpAnimation: false,
+        startDownAnimation: false,
+        lookingUpTimeout: null,
         customDraw: function(icon, context, currentY){
             context.save();
             context.scale(1.5, 1);
             context.beginPath();
-            context.arc(icon.x + 35, currentY + 25 + icon.offset, 20, 0, Math.PI * 2, true);
+            context.arc(icon.x + 35, icon.y + 25, 20, 0, Math.PI * 2, true);
             context.closePath();
             context.clip();
 
             context.scale(1, 1);
-            context.drawImage(icon.img, icon.x, currentY + icon.offset, icon.width, icon.height);
+            context.drawImage(icon.img, icon.x, icon.y, icon.width, icon.height);
             context.scale(1.5, 1);
 
             context.beginPath();
@@ -75,7 +75,10 @@ var scene,
         y: initialY,
         width: 75,
         height: 50,
-        offset: 0
+        offset: 0,
+        startUpAnimation: false,
+        startDownAnimation: false,
+        lookingUpTimeout: null
     },
     email = {
         time: null,
@@ -85,7 +88,10 @@ var scene,
         y: initialY,
         width: 75,
         height: 40,
-        offset: 0
+        offset: 0,
+        startUpAnimation: false,
+        startDownAnimation: false,
+        lookingUpTimeout: null
     },
     news = {
         time: null,
@@ -95,9 +101,10 @@ var scene,
         y: initialY,
         width: 75,
         height: 40,
-        initialY: -100,
-        currentY: -100,
-        offset: 0
+        offset: 0,
+        startUpAnimation: false,
+        startDownAnimation: false,
+        lookingUpTimeout: null
     },
     icons = [user, messages, email],
     animationSpeed = 15;
@@ -161,6 +168,14 @@ var iconIntersect = function(cursor, fail){
     return null;
 };
 
+var doSetTimeout = function(icon) {
+    icon.lookingUpTimeout = setTimeout(function() {
+        if (DEBUG)
+            console.log('Going up');
+        icon.startDownAnimation = true;
+    }, 10000);
+}
+
 var animate = function(){
     if (context) {
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -220,69 +235,80 @@ var animate = function(){
                 cursor.y = null;
             }
         }
+        for (var i = 0; i < icons.length; i++) {
+            var icon = icons[i];
 
-        if (startUpAnimation) {
-            currentY += animationSpeed;
-
-            // End of the animation.
-            if (currentY >= finalY) {
-                currentY = finalY;
-                startUpAnimation = false;
-                // Create a timeout to go back up.
-                if (lookingUpTimeout) {
-                    clearTimeout(lookingUpTimeout);
+            if (icon.startUpAnimation) {
+                if (DEBUG) {
+                    console.log('GOING DOWN!', icon.y, animationSpeed);
                 }
+                icon.y += animationSpeed;
 
-                lookingUpTimeout = setTimeout(function() {
-                    startDownAnimation = true;
-                }, 10000);
-            }
-        }
-        else if (startDownAnimation) {
-            currentY -= animationSpeed;
-
-            // End.
-            if (currentY <= initialY) {
-                currentY = initialY;
-                startDownAnimation = false;
-            }
-        }
-        // If not animating check if cursor is on icon
-        else {
-            var intersectIcon = iconIntersect(cursor, function(icon){
-                icon.time = null;
-            });
-
-            if (intersectIcon) {
-                if (!icon.time) {
-                    icon.time = new Date();
-                }
-                else if (new Date() - icon.time > 500 && icon.clickHandler) {
+                // End of the animation.
+                if (icon.y >= finalY) {
+                    if (DEBUG) {
+                        console.log('ENDING ANIMATION', icon.y, finalY);
+                    }
+                    icon.y = finalY;
+                    icon.startUpAnimation = false;
+                    // Create a timeout to go back up.
+                    if (icon.lookingUpTimeout) {
+                        clearTimeout(icon.lookingUpTimeout);
+                    }
                     if (DEBUG)
-                        console.log('CALLING HANDLER');
-                    icon.clickHandler();
+                        console.log('Set timeout');
+
+                    doSetTimeout(icon);
+                }
+            }
+            else if (icon.startDownAnimation) {
+                icon.y -= animationSpeed;
+                if (DEBUG) {
+                    console.log('GOING UP!', icon.y, animationSpeed);
+                }
+
+                // End.
+                if (icon.y <= initialY) {
+                    icon.y = initialY;
+                    icon.startDownAnimation = false;
+                }
+            }
+            // If not animating check if cursor is on icon
+            else {
+                var intersectIcon = iconIntersect(cursor, function(icon){
                     icon.time = null;
+                });
+
+                if (intersectIcon) {
+                    if (!icon.time) {
+                        icon.time = new Date();
+                    }
+                    else if (new Date() - icon.time > 500 && icon.clickHandler) {
+                        if (DEBUG)
+                            console.log('CALLING HANDLER');
+                        icon.clickHandler();
+                        icon.time = null;
+                    }
                 }
             }
         }
-
 
         // Draw the icons.
         icons.forEach(function(icon){
             if (icon.customDraw){
-                icon.customDraw(icon, context, currentY);
+                icon.customDraw(icon, context, icon.y);
             }
             else if (icon.img) {
                 // User picture
                 context.globalAlpha = icon.opacity || 0.75;
-                context.drawImage(icon.img, icon.x, currentY + icon.offset, icon.width, icon.height);
+                context.drawImage(icon.img, icon.x, icon.y, icon.width, icon.height);
                 context.globalAlpha = 1;
             }
             else {
                 // User picture
                 context.globalAlpha = 0.75;
                 context.beginPath();
-                context.arc(icon.x, currentY + icon.offset, icon.radius, 0, 2 * Math.PI, false);
+                context.arc(icon.x, icon.y, icon.radius, 0, 2 * Math.PI, false);
                 context.fillStyle = 'white';
                 context.fill();
                 context.closePath();
@@ -337,11 +363,14 @@ var init = function(){
 
     if (window.DeviceOrientationEvent) {
         window.addEventListener('deviceorientation', function(evt){
-            // if (DEBUG)
-            //     console.log(evt.gamma, currentY, initialY);
+        //if (DEBUG)
+        //    console.log(evt.gamma, user.y, initialY);
 
-            // startUpAnimation = startUpAnimation || (evt.gamma < 70
-            //         && evt.gamma > 50 && currentY <= initialY);
+        //for (var i = 0; i < icons.length; i++) {
+        //    var icon = icons[i];
+        //    icon.startUpAnimation = icon.startUpAnimation || (evt.gamma < 70
+        //        && evt.gamma > 50 && icon.y <= initialY);
+        //}
 
         }.bind(this));
     }
@@ -411,11 +440,9 @@ var init = function(){
         });
     });
 
-    // // connect to websocket
-    // var socket = io();
-    // socket.on('twilioincoming', function(msg){
-    //     console.log(msg);
-    // });
+    socket.on('twilioincoming', function(msg){
+        messages.startUpAnimation = true;
+    });
 
     // socket.emit('twiliooutgoing', {'body' : 'Yofammmmmm', 'to' : '4163170133'});
 
