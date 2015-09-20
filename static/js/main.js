@@ -159,6 +159,7 @@ var animate = function(){
             var colorOffset  = {red: 0, green: 1, blue: 2, alpha: 3};
             var blueones = [];
 
+            // Go through a the top header area to look for pink areas.
             for (var i = 0; i < 120 * 4 * canvas.height && i < pixels.length; i += 4) {
                 var r = pixels[i];
                 var g = pixels[i + 1];
@@ -193,6 +194,7 @@ var animate = function(){
                 context.arc(pos[0], pos[1], 10, 0, 2 * Math.PI, false);
                 context.fillStyle = 'rgba(100, 100, 255, 255)';
                 context.fill();
+                context.closePath();
                 context.globalAlpha = 1;
 
                 // Keep track of cursor.
@@ -208,25 +210,16 @@ var animate = function(){
         }
 
         if (startUpAnimation) {
-            if (DEBUG) {
-                console.log('GOING DOWN!', currentY, animationSpeed);
-            }
             currentY += animationSpeed;
 
             // End of the animation.
             if (currentY >= finalY) {
-                if (DEBUG) {
-                    console.log('ENDING ANIMATION', currentY, finalY);
-                }
                 currentY = finalY;
                 startUpAnimation = false;
                 // Create a timeout to go back up.
                 if (lookingUpTimeout) {
                     clearTimeout(lookingUpTimeout);
                 }
-
-                if (DEBUG)
-                    console.log('Set timeout');
 
                 lookingUpTimeout = setTimeout(function() {
                     startDownAnimation = true;
@@ -256,7 +249,7 @@ var animate = function(){
                     if (!icon.time) {
                         icon.time = new Date();
                     }
-                    else if (new Date() - icon.time > 3000 && icon.clickHandler) {
+                    else if (new Date() - icon.time > 1000 && icon.clickHandler) {
                         if (DEBUG)
                             console.log('CALLING HANDLER');
                         icon.clickHandler();
@@ -286,6 +279,7 @@ var animate = function(){
                 context.arc(icon.x, currentY + icon.offset, icon.radius, 0, 2 * Math.PI, false);
                 context.fillStyle = 'white';
                 context.fill();
+                context.closePath();
                 context.globalAlpha = 1;
             }
         });
@@ -307,10 +301,12 @@ var animate = function(){
         if (dialogScale > 0) {
             // context.reset();
             context.globalAlpha = 0.8;
+            context.beginPath();
             context.rect(dialog.x * dialogScale, dialog.y * dialogScale,
                     dialog.width * dialogScale, dialog.height * dialogScale);
             context.fillStyle = '#fff';
             context.fill();
+            context.closePath();
             context.globalAlpha = 1;
         }
 
@@ -409,13 +405,13 @@ var init = function(){
         });
     });
 
-    // connect to websocket
-    var socket = io();
-    socket.on('twilioincoming', function(msg){
-        console.log(msg);
-    });
+    // // connect to websocket
+    // var socket = io();
+    // socket.on('twilioincoming', function(msg){
+    //     console.log(msg);
+    // });
 
-    socket.emit('twiliooutgoing', {'body' : 'Yofammmmmm', 'to' : '4163170133'});
+    // socket.emit('twiliooutgoing', {'body' : 'Yofammmmmm', 'to' : '4163170133'});
 
     animate();
 };
