@@ -630,7 +630,7 @@ var animate = function(){
                 if (!button.time) {
                     button.time = new Date();
                 }
-                else if (new Date() - button.time > 500 && button.clickHandler) {
+                else if (new Date() - button.time > 750 && button.clickHandler) {
                     if (DEBUG)
                         console.log('CALLING HANDLER');
                     button.clickHandler();
