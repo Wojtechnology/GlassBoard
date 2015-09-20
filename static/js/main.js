@@ -209,23 +209,6 @@ var animate = function(){
                 context.closePath();
                 context.globalAlpha = 1;
 
-                // Only detect gestures if cursor is available.
-                if (cursor.x && cursor.y) {
-                    // Gesture detection!!!!
-                    var iconIntersect = iconIntersect(cursor);
-                    // icon specific gesture.
-                    if (iconIntersect) {
-
-                    }
-                    // Global gestures.
-                    else {
-                        // swipe
-                        if (Math.abs(cursor.x - pos[0]) >= 500){
-                            console.log('swipe');
-                        }
-                    }
-                }
-
                 // Keep track of cursor.
                 cursor.x = pos[0];
                 cursor.y = pos[1];
