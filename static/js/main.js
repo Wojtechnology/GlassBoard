@@ -55,6 +55,7 @@ var scene,
             if (!replyOpen) {
                 replyOpen = true;
                 openDialog = false;
+                replyStart();
             }
         },
         text: '',
