@@ -26,12 +26,12 @@ var scene,
     },
     cancel = {
         clickHandler: function(){
-            if (notifications.length) {
-                console.log('CANCEL');
+            if (openDialog) {
+                openDialog = false;
             }
         },
         time: null,
-        id: 'user',
+        id: 'cancel',
         x: 10,
         y: initialY,
         width: 75,
@@ -45,18 +45,37 @@ var scene,
     },
     reply = {
         clickHandler: function(){
-            if (notifications.length) {
+            if (openDialog) {
                 console.log('REPLY');
             }
         },
         time: null,
-        id: 'user',
+        id: 'reply',
         x: 10,
         y: initialY,
         width: 75,
         height: 50,
         offset: -5,
         img: document.getElementById('reply'),
+        opacity: 1,
+        startUpAnimation: false,
+        startDownAnimation: false,
+        lookingUpTimeout: null
+    },
+    send = {
+        clickHandler: function(){
+            if (openDialog) {
+                console.log('SEND');
+            }
+        },
+        time: null,
+        id: 'send',
+        x: 10,
+        y: initialY,
+        width: 75,
+        height: 50,
+        offset: -5,
+        img: document.getElementById('send'),
         opacity: 1,
         startUpAnimation: false,
         startDownAnimation: false,
@@ -172,7 +191,7 @@ var scene,
             var titleDim = getDim(20, 25);
             context.font = '20px Avenir';
             context.fillStyle = '#333';
-            context.fillText('From: ' + from, titleDim.x, titleDim.y);
+            context.fillText(from, titleDim.x, titleDim.y);
             context.font = '15px Avenir';
             var msgDim = getDim(20, 60);
             context.fillText(text, msgDim.x, msgDim.y);
