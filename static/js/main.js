@@ -210,7 +210,7 @@ var animate = function(){
                 context.globalAlpha = 1;
 
                 // Only detect gestures if cursor is available.
-                if (cursor.x && cursor.y)
+                if (cursor.x && cursor.y) {
                     // Gesture detection!!!!
                     var iconIntersect = iconIntersect(cursor);
                     // icon specific gesture.
