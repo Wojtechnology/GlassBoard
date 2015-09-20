@@ -23,7 +23,14 @@ var scene,
         time: 0
     },
     openDialog = false,
-    dialog,
+    dialogScale = 0,
+    dialog = {
+        text: notifications[0],
+        width: 420,
+        height: 150,
+        x: 50,
+        y: 50
+    },
     user = {
         time: null,
         id: 'user',
@@ -244,7 +251,7 @@ var animate = function(){
                         && cursor.y > currentY + icon.offset && cursor.y < currentY + icon.offset
                         + icon.height) {
                     if (DEBUG)
-                        console.log('OVER ICON', icon.id, new Date() - icon.time);
+                        console.log('OVER ICON', icon.id, new Date() - (icon.time || new Date()));
 
                     if (!icon.time) {
                         icon.time = new Date();
@@ -282,6 +289,30 @@ var animate = function(){
                 context.globalAlpha = 1;
             }
         });
+
+
+        if (openDialog && dialog && dialogScale <= 1.0) {
+            dialogScale += 0.1;
+            if (dialogScale >= 1) {
+                dialogScale = 1;
+            }
+        }
+        else if (!openDialog && dialog && dialogScale >= 0) {
+            dialogScale -= 0.1;
+            if (dialogScale <= 0) {
+                dialogScale = 0;
+            }
+        }
+
+        if (dialogScale > 0) {
+            // context.reset();
+            context.globalAlpha = 0.8;
+            context.rect(dialog.x * dialogScale, dialog.y * dialogScale,
+                    dialog.width * dialogScale, dialog.height * dialogScale);
+            context.fillStyle = '#fff';
+            context.fill();
+            context.globalAlpha = 1;
+        }
 
     }
 
