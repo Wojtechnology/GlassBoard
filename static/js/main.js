@@ -7,6 +7,7 @@ var scene,
     video,
     canvas,
     context,
+    detector,
     socket = io(),
     lookingUp = false,
     initialY = -100,
@@ -17,6 +18,7 @@ var scene,
         body: 'Yofammmmmm',
         from: '6133848944'
     }],
+    detectFaces = false,
     cursor = {
         x: -1,
         y: -1,
@@ -252,6 +254,37 @@ var animate = function(){
                 lastPos = null;
                 cursor.x = null;
                 cursor.y = null;
+            }
+
+            if (video.videoWidth > 0 && detectFaces) {
+                if (!detector) {
+                    var width = video.videoWidth;
+                    var height = video.videoHeight;
+                    detector = new objectdetect.detector(width, height, 1.1, objectdetect.frontalface);
+                }
+
+                var coords = detector.detect(video, 1, 8);
+                
+                if (coords[0]) {
+                    var coord = coords[0];
+                    
+                    // Rescale coordinates from detector to video coordinate space:
+                    coord[0] *= video.videoWidth / detector.canvas.width;
+                    coord[1] *= video.videoHeight / detector.canvas.height;
+                    coord[2] *= video.videoWidth / detector.canvas.width;
+                    coord[3] *= video.videoHeight / detector.canvas.height;
+                
+                    // Draw coordinates on video overlay:
+                    context.beginPath();
+                    context.lineWidth = '2';
+                    context.fillStyle = 'rgba(0, 255, 255, 0.5)';
+                    context.fillRect(
+                        coord[0] / video.videoWidth * canvas.width,
+                        coord[1] / video.videoHeight * canvas.height,
+                        coord[2] / video.videoWidth * canvas.width,
+                        coord[3] / video.videoHeight * canvas.height);
+                    context.stroke();
+                }
             }
         }
 
