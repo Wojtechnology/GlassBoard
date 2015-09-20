@@ -17,7 +17,13 @@ var scene,
     finalY = 30,
     DEBUG = true,
     profile,
+    cursor = {
+        x: -1,
+        y: -1,
+        time: 0
+    },
     user = {
+        id: 'user',
         x: 10,
         y: initialY,
         width: 75,
@@ -45,6 +51,7 @@ var scene,
         }
     },
     messages = {
+        id: 'messages',
         img: document.getElementById('msg'),
         x: 250,
         y: initialY,
@@ -52,7 +59,17 @@ var scene,
         height: 50,
         offset: 0
     },
+    email = {
+        id: 'email',
+        img: document.getElementById('email'),
+        x: 350,
+        y: initialY,
+        width: 75,
+        height: 40,
+        offset: 0
+    },
     news = {
+        id: 'news',
         img: document.getElementById('news'),
         x: 300,
         y: initialY,
@@ -60,15 +77,6 @@ var scene,
         height: 40,
         initialY: -100,
         currentY: -100,
-        offset: 0
-    },
-
-    email = {
-        img: document.getElementById('email'),
-        x: 350,
-        y: initialY,
-        width: 75,
-        height: 40,
         offset: 0
     },
     icons = [user, messages, email],
@@ -160,6 +168,10 @@ var animate = function(){
                 context.fill();
                 context.globalAlpha = 1;
 
+                // Keep track of cursor.
+                cursor.x = pos[0];
+                cursor.y = pos[1];
+
                 lastPos = pos;
             } else {
                 lastPos = null;
@@ -199,6 +211,19 @@ var animate = function(){
             if (currentY <= initialY) {
                 currentY = initialY;
                 startDownAnimation = false;
+            }
+        }
+        // If not animating check if cursor is on icon
+        else {
+            for (var i = 0; i < icons.length; i++) {
+                var icon = icons[i];
+                // In bounding rectangle of icon.
+                if (cursor.x > icon.x && cursor.x < icon.x + icon.width &&
+                        cursor.y > icon.y && cursor.y < icon.y + icon.height) {
+                    if (icon.id === 'messages') {
+                        alert('you touch messages!');
+                    }
+                }
             }
         }
 
