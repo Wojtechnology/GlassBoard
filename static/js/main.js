@@ -255,7 +255,6 @@ var doSetTimeout = function(icon) {
 
 var animate = function(){
     // whether or not we are in the process of an animation.
-    var animating = false;
     if (context) {
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
@@ -352,7 +351,6 @@ var animate = function(){
             var icon = icons[i];
 
             if (icon.startUpAnimation) {
-                animating = true;
                 icon.y += animationSpeed;
 
                 // End of the animation.
@@ -368,7 +366,6 @@ var animate = function(){
                 }
             }
             else if (icon.startDownAnimation) {
-                animating = true;
                 icon.y -= animationSpeed;
 
                 // End.
@@ -403,14 +400,12 @@ var animate = function(){
         });
 
         if (openDialog && dialog && dialogScale <= 1.0) {
-            animating = true;
             dialogScale += 0.1;
             if (dialogScale >= 1) {
                 dialogScale = 1;
             }
         }
         else if (!openDialog && dialog && dialogScale >= 0) {
-            animating = true;
             dialogScale -= 0.1;
             if (dialogScale <= 0) {
                 dialogScale = 0;
@@ -450,31 +445,23 @@ var animate = function(){
             }, context, notifications[0].from, notifications[0].body, dialogScale);
         }
 
-        // we cant click nything while an animation is running.\
-        if (!animating) {
-            console.log('checking buttons');
+        for(var i = 0; i < buttons.length; i++){
+            var button = buttons[i];
+            // click handlers
+            var intersect = buttonIntersect(button, cursor);
+            console.log('Intersect!', intersect);
 
-            for(var i = 0; i < buttons.length; i++){
-                var button = buttons[i];
-                // click handlers
-                var intersect = buttonIntersect(button, cursor);
-                console.log('Intersect!', intersect);
-
-                if (intersect) {
-                    if (!button.time) {
-                        button.time = new Date();
-                    }
-                    else if (new Date() - button.time > 500 && button.clickHandler) {
-                        if (DEBUG)
-                            console.log('CALLING HANDLER');
-                        button.clickHandler();
-                        button.time = null;
-                    }
+            if (intersect) {
+                if (!button.time) {
+                    button.time = new Date();
+                }
+                else if (new Date() - button.time > 500 && button.clickHandler) {
+                    if (DEBUG)
+                        console.log('CALLING HANDLER');
+                    button.clickHandler();
+                    button.time = null;
                 }
             }
-        }
-        else{
-            console.log('NOOOO');
         }
     }
 
