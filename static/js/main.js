@@ -178,20 +178,7 @@ var scene,
     },
     icons = [user, messages, email],
     animationSpeed = 15,
-    replyButton = {
-        clickHandler: function(){
-            replyStart(function(string){
-                replyDialog.text = string.substring(0, 20);
-                replyOpen = true;
-            });
-        },
-        x: 50,
-        y: 50,
-        width: 50,
-        height: 100,
-        time: null
-    },
-    buttons = [user, messages, email, replyButton, cancel, reply],
+    buttons = [user, messages, email, cancel, reply],
     openDialog = false,
     dialogScale = 0,
     replyDialogScale = 1,
