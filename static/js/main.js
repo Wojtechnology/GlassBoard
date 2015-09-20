@@ -174,8 +174,6 @@ var animate = function(){
                     ( g > (checkg-25) && g < (checkg+25) ) &&
                     ( b > (checkb-25) && b < (checkb+25) )
                 ) {
-                    if (DEBUG)
-                        console.log('PINK PIXEL!');
                     blueones.push([(i / 4) % canvas.width, (i / 4) / canvas.width])
                 }
             }
