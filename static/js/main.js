@@ -26,12 +26,12 @@ var scene,
     },
     cancel = {
         clickHandler: function(){
-            if (notifications.length) {
-                console.log('CANCEL');
+            if (openDialog) {
+                openDialog = false;
             }
         },
         time: null,
-        id: 'user',
+        id: 'cancel',
         x: 10,
         y: initialY,
         width: 75,
@@ -48,17 +48,19 @@ var scene,
         clickHandler: function(){
             if (!replyOpen) {
                 replyOpen = true;
+                openDialog = false;
                 replyStart();
             }
 
 
             if (notifications.length) {
+            //if (openDialog) {
                 console.log('REPLY');
             }
         },
         text: '',
         time: null,
-        id: 'user',
+        id: 'reply',
         x: 10,
         y: initialY,
         width: 75,
@@ -69,6 +71,25 @@ var scene,
         startUpAnimation: false,
         startDownAnimation: false,
         lookingUpTimeout: null,
+    },
+    send = {
+        clickHandler: function(){
+            if (replyOpen) {
+                console.log('SEND');
+            }
+        },
+        time: null,
+        id: 'send',
+        x: 10,
+        y: initialY,
+        width: 75,
+        height: 50,
+        offset: -5,
+        img: document.getElementById('send'),
+        opacity: 1,
+        startUpAnimation: false,
+        startDownAnimation: false,
+        lookingUpTimeout: null
     },
     user = {
         time: null,
@@ -168,6 +189,7 @@ var scene,
     buttons = [user, messages, email, replyButton, cancel, reply],
     openDialog = false,
     dialogScale = 0,
+    replyDialogScale = 1,
 
     replyDialog = {
         text: "",
@@ -189,12 +211,12 @@ var scene,
             // Add reply and cancel buttons.
             context.globalAlpha = 0.75;
 
-            var replyDim = getDim(355, 5, 40, 20);
-            reply.width = replyDim.width;
-            reply.height = replyDim.height;
-            reply.x = replyDim.x;
-            reply.y = replyDim.y;
-            context.drawImage(reply.img, reply.x, reply.y, reply.width, reply.height);
+            var sendDim = getDim(355, 5, 40, 20);
+            send.width = sendDim.width;
+            send.height = sendDim.height;
+            send.x = sendDim.x;
+            send.y = sendDim.y;
+            context.drawImage(send.img, send.x, send.y, send.width, send.height);
 
             var cancelDim = getDim(355, 35, 40, 20);
             cancel.width = cancelDim.width;
@@ -221,7 +243,7 @@ var scene,
             var titleDim = getDim(20, 25);
             context.font = '20px Avenir';
             context.fillStyle = '#333';
-            context.fillText('From: ' + from, titleDim.x, titleDim.y);
+            context.fillText(from, titleDim.x, titleDim.y);
             context.font = '15px Avenir';
             var msgDim = getDim(20, 60);
             context.fillText(text, msgDim.x, msgDim.y);
@@ -312,7 +334,7 @@ var doSetTimeout = function(icon) {
         if (DEBUG)
             console.log('Going up');
         icon.startDownAnimation = true;
-    }, 10000);
+    }, 5000);
 }
 
 var animate = function(){
@@ -508,26 +530,35 @@ var animate = function(){
         }
 
         if (replyOpen){
+           
+            context.globalAlpha = 0.8;
+            context.beginPath();
+            context.rect(replyDialog.x, replyDialog.y,
+            replyDialog.width * replyDialogScale, replyDialog.height * replyDialogScale);
+            context.fillStyle = '#fff';
+            context.fill();
+            context.closePath();
+            context.globalAlpha = 1;
             replyDialog.internalDraw(function(x, y, width, height){
                 var output = {};
                 if (typeof x === 'number'){
-                    output.x = dialog.x + x;
+                    output.x = replyDialog.x + x;
                 }
 
                 if (typeof y === 'number'){
-                    output.y = dialog.y + y;
+                    output.y = replyDialog.y + y;
                 }
 
                 if (typeof width === 'number') {
-                    output.width = width*dialogScale;
+                    output.width = width;
                 }
 
                 if (typeof height === 'number') {
-                    output.height = height * dialogScale;
+                    output.height = height;
                 }
 
                 return output;
-            }, context, replyDialog.text, dialogScale);
+            }, context, replyDialog.text, 1);
 
         }
 
@@ -660,9 +691,20 @@ var init = function(){
     });
 
     socket.on('twilioincoming', function(msg){
-        // messages.startUpAnimation = true;
+        messages.startUpAnimation = true;
         notifications[0] = msg;
-        openDialog = true;
+    });
+
+    var api = new FacePP('0ef14fa726ce34d820c5a44e57fef470', '4Y9YXOMSDvqu1Ompn9NSpNwWQFHs1hYD');
+    api.request('detection/detect', {
+        url: 'http://www.thenextgreatgeneration.com/wp-content/uploads/2011/07/s2-tbbt-cast-raj-01_595.jpg'
+    }, function(err, result) {
+        if (err) {
+            // TODO handle error
+            return;
+        }
+        // TODO use result
+        console.log(JSON.stringify(result, null, 2));
     });
 
     // socket.emit('twiliooutgoing', {'body' : 'Yofammmmmm', 'to' : '4163170133'});
