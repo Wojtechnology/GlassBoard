@@ -1,9 +1,13 @@
 var morgan = require('morgan');
 var twilio = require('twilio');
+var path = require('path');
+var fs = require('fs');
 var twclient = twilio('ACb8f9a1eea7e6769f925bf2dab0879822', '3639e77e024315b49ebca0b6bb0ac0fa');
 var express = require('express');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
 var app = express();
+
+var appDir = path.dirname(require.main.filename);
 
 // Websocket stuff
 var http = require('http').Server(app);
