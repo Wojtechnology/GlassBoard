@@ -13,7 +13,7 @@ var scene,
     finalY = 30,
     DEBUG = true,
     profile,
-    notifications = ['TESTING'],
+    notifications = [],
     cursor = {
         x: -1,
         y: -1,
@@ -66,6 +66,12 @@ var scene,
                 startDownAnimation = true;
                 dialog.text = notifications[0];
                 openDialog = true;
+                for (var i = 0; i < icons.length; i++) {
+                    var icon = icons[i];
+                    icon.startUpAnimation = false;
+                    icon.startDownAnimation = true;
+                    icon.lookingUpTimeout = null;
+                }
             }
         },
         time: null,
@@ -427,6 +433,7 @@ var init = function(){
 
     socket.on('twilioincoming', function(msg){
         messages.startUpAnimation = true;
+        notifications.push(msg);
     });
 
     // socket.emit('twiliooutgoing', {'body' : 'Yofammmmmm', 'to' : '4163170133'});
