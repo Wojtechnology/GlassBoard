@@ -24,6 +24,44 @@ var scene,
         y: -1,
         time: 0
     },
+    cancel = {
+        clickHandler: function(){
+            if (notifications.length) {
+                console.log('CANCEL');
+            }
+        },
+        time: null,
+        id: 'user',
+        x: 10,
+        y: initialY,
+        width: 75,
+        height: 50,
+        offset: -5,
+        img: document.getElementById('cancel'),
+        opacity: 1,
+        startUpAnimation: false,
+        startDownAnimation: false,
+        lookingUpTimeout: null
+    },
+    reply = {
+        clickHandler: function(){
+            if (notifications.length) {
+                console.log('REPLY');
+            }
+        },
+        time: null,
+        id: 'user',
+        x: 10,
+        y: initialY,
+        width: 75,
+        height: 50,
+        offset: -5,
+        img: document.getElementById('reply'),
+        opacity: 1,
+        startUpAnimation: false,
+        startDownAnimation: false,
+        lookingUpTimeout: null
+    },
     user = {
         time: null,
         id: 'user',
@@ -59,8 +97,6 @@ var scene,
     messages = {
         clickHandler: function(){
             if (notifications.length) {
-                startDownAnimation = true;
-                dialog.text = notifications[0];
                 openDialog = true;
                 for (var i = 0; i < icons.length; i++) {
                     var icon = icons[i];
@@ -111,9 +147,6 @@ var scene,
     icons = [user, messages, email],
     animationSpeed = 15,
     replyButton = {
-        draw: function(context, pos){
-
-        },
         clickHandler: function(){
 
         },
@@ -123,7 +156,7 @@ var scene,
         height: 100,
         time: null
     },
-    buttons = [user, messages, email, replyButton],
+    buttons = [user, messages, email, replyButton, cancel, reply],
     openDialog = false,
     dialogScale = 0,
     dialog = {
@@ -132,7 +165,10 @@ var scene,
         height: 150,
         x: 50,
         y: 50,
-        internalDraw: function(getDim, context, from, text){
+        internalDraw: function(getDim, context, from, text, dialogScale){
+            if (dialogScale !== 1.0) {
+                return;
+            }
             var titleDim = getDim(20, 25);
             context.font = '20px Avenir';
             context.fillStyle = '#333';
@@ -140,6 +176,26 @@ var scene,
             context.font = '15px Avenir';
             var msgDim = getDim(20, 60);
             context.fillText(text, msgDim.x, msgDim.y);
+
+            // Add reply and cancel buttons.
+            context.globalAlpha = 0.75;
+
+            var replyDim = getDim(355, 5, 40, 20);
+            reply.width = replyDim.width;
+            reply.height = replyDim.height;
+            reply.x = replyDim.x;
+            reply.y = replyDim.y;
+            context.drawImage(reply.img, reply.x, reply.y, reply.width, reply.height);
+
+            var cancelDim = getDim(355, 35, 40, 20);
+            cancel.width = cancelDim.width;
+            cancel.height = cancelDim.height;
+            cancel.x = cancelDim.x;
+            cancel.y = cancelDim.y;
+            context.drawImage(cancel.img, cancel.x, cancel.y, cancel.width, cancel.height);
+
+            context.globalAlpha = 1;
+
         }
     };
 
@@ -213,7 +269,7 @@ var animate = function(){
             var blueones = [];
 
             // Go through a the top header area to look for pink areas.
-            for (var i = 0; i < 120 * 4 * canvas.height && i < pixels.length; i += 4) {
+            for (var i = 0; i < 120 * 4 * canvas.width && i < pixels.length; i += 4) {
                 var r = pixels[i];
                 var g = pixels[i + 1];
                 var b = pixels[i + 2];
@@ -267,16 +323,16 @@ var animate = function(){
                 }
 
                 var coords = detector.detect(video, 1, 8);
-                
+
                 if (coords[0]) {
                     var coord = coords[0];
-                    
+
                     // Rescale coordinates from detector to video coordinate space:
                     coord[0] *= video.videoWidth / detector.canvas.width;
                     coord[1] *= video.videoHeight / detector.canvas.height;
                     coord[2] *= video.videoWidth / detector.canvas.width;
                     coord[3] *= video.videoHeight / detector.canvas.height;
-                
+
                     // Draw coordinates on video overlay:
                     context.beginPath();
                     context.lineWidth = '2';
@@ -402,7 +458,7 @@ var animate = function(){
                 }
 
                 return output;
-            }, context, notifications[0].from, notifications[0].body);
+            }, context, notifications[0].from, notifications[0].body, dialogScale);
         }
 
         // we cant click nything while an animation is running.\
@@ -449,11 +505,11 @@ var init = function(){
         //if (DEBUG)
         //    console.log(evt.gamma, user.y, initialY);
 
-        //for (var i = 0; i < icons.length; i++) {
-        //    var icon = icons[i];
-        //    icon.startUpAnimation = icon.startUpAnimation || (evt.gamma < 70
-        //        && evt.gamma > 50 && icon.y <= initialY);
-        //}
+        for (var i = 0; i < icons.length; i++) {
+           var icon = icons[i];
+           icon.startUpAnimation = icon.startUpAnimation || (evt.gamma < 70
+               && evt.gamma > 50 && icon.y <= initialY);
+        }
 
         }.bind(this));
     }
