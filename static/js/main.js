@@ -1,4 +1,3 @@
-
 var scene,
     camera,
     renderer,
@@ -22,7 +21,18 @@ var scene,
         y: -1,
         time: 0
     },
+    openDialog = false,
     user = {
+        clickHandler: function(){
+            startDownAnimation = true;
+            dialog = {
+                text: 'TESTING',
+                width: 100,
+                height: 100
+            };
+            openDialog = true;
+        },
+        time: null,
         id: 'user',
         x: 10,
         y: initialY,
@@ -51,6 +61,7 @@ var scene,
         }
     },
     messages = {
+        time: null,
         id: 'messages',
         img: document.getElementById('msg'),
         x: 250,
@@ -60,6 +71,7 @@ var scene,
         offset: 0
     },
     email = {
+        time: null,
         id: 'email',
         img: document.getElementById('email'),
         x: 350,
@@ -69,6 +81,7 @@ var scene,
         offset: 0
     },
     news = {
+        time: null,
         id: 'news',
         img: document.getElementById('news'),
         x: 300,
@@ -178,6 +191,8 @@ var animate = function(){
                 lastPos = pos;
             } else {
                 lastPos = null;
+                cursor.x = null;
+                cursor.y = null;
             }
         }
 
@@ -204,7 +219,7 @@ var animate = function(){
 
                 lookingUpTimeout = setTimeout(function() {
                     startDownAnimation = true;
-                }, 5000);
+                }, 10000);
             }
         }
         else if (startDownAnimation) {
@@ -220,13 +235,25 @@ var animate = function(){
         else {
             for (var i = 0; i < icons.length; i++) {
                 var icon = icons[i];
-                console.log(cursor.x, cursor.y, icon.x, icon.y);
                 // In bounding rectangle of icon.
-                if (cursor.x > icon.x && cursor.x < icon.x + icon.width &&
-                        cursor.y > icon.y && cursor.y < icon.y + icon.height) {
-                    if (icon.id === 'messages') {
-                        alert('you touched messages!');
+                if (cursor.x && cursor.y && cursor.x > icon.x && cursor.x < icon.x + icon.width
+                        && cursor.y > currentY + icon.offset && cursor.y < currentY + icon.offset
+                        + icon.height) {
+                    if (DEBUG)
+                        console.log('OVER ICON', icon.id, new Date() - icon.time);
+
+                    if (!icon.time) {
+                        icon.time = new Date();
                     }
+                    else if (new Date() - icon.time > 3000 && icon.clickHandler) {
+                        if (DEBUG)
+                            console.log('CALLING HANDLER');
+                        icon.clickHandler();
+                        icon.time = null;
+                    }
+                }
+                else {
+                    icon.time = null;
                 }
             }
         }
