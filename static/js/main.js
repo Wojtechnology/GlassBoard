@@ -64,11 +64,7 @@ var scene,
         clickHandler: function(){
             if (notifications.length) {
                 startDownAnimation = true;
-                dialog = {
-                    text: notifications[0],
-                    width: 100,
-                    height: 100
-                };
+                dialog.text = notifications[0];
                 openDialog = true;
             }
         },
