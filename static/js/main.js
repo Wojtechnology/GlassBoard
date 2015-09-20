@@ -176,6 +176,12 @@ var doSetTimeout = function(icon) {
     }, 10000);
 }
 
+var
+
+
+
+
+
 var animate = function(){
     if (context) {
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -448,9 +454,6 @@ var init = function(){
 
     animate();
 };
-
-
-// init();
 
 window.fbAsyncInit = function() {
     FB.init({
