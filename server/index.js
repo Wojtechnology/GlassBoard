@@ -13,7 +13,7 @@ app.use(express.static('static'));
 
 app.post('/incoming', function (req, res) {
 	console.log('Received Incoming')
-	console.log(req)
+	console.log(req.params)
 	io.emit('twilioincoming', 'Hello');
 	res.send('');
 });
