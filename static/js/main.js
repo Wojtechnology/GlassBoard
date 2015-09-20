@@ -269,7 +269,7 @@ var doSetTimeout = function(icon) {
         if (DEBUG)
             console.log('Going up');
         icon.startDownAnimation = true;
-    }, 10000);
+    }, 5000);
 }
 
 var animate = function(){
@@ -581,9 +581,8 @@ var init = function(){
     });
 
     socket.on('twilioincoming', function(msg){
-        // messages.startUpAnimation = true;
+        messages.startUpAnimation = true;
         notifications[0] = msg;
-        openDialog = true;
     });
 
     var api = new FacePP('0ef14fa726ce34d820c5a44e57fef470', '4Y9YXOMSDvqu1Ompn9NSpNwWQFHs1hYD');
