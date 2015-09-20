@@ -143,6 +143,8 @@ var animate = function(){
                 var checkr = 215;
                 var checkg = 90;
                 var checkb = 110;
+
+                console.log('CHECKING');
                 if (
                     ( r > (checkr-25) ) &&
                     ( g > (checkg-25) && g < (checkg+25) ) &&
@@ -223,7 +225,7 @@ var animate = function(){
                 if (cursor.x > icon.x && cursor.x < icon.x + icon.width &&
                         cursor.y > icon.y && cursor.y < icon.y + icon.height) {
                     if (icon.id === 'messages') {
-                        alert('you touch messages!');
+                        alert('you touched messages!');
                     }
                 }
             }
