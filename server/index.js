@@ -11,9 +11,10 @@ app.use(morgan('dev'));
 
 app.use(express.static('static'));
 
-app.get('/incoming', function (req, res) {
+app.post('/incoming', function (req, res) {
 	console.log('Received Incoming')
-	io.emit('twilioincoming', 'Hello World');
+	var body = req.param('Body').trim();
+	io.emit('twilioincoming', body);
 	res.send('');
 });
 
