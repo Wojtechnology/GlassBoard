@@ -143,6 +143,24 @@ var fullscreen = function(){
     }
 }
 
+// fail - fn to run if icon doesnt intersect.
+var iconIntersect = function(cursor, fail){
+    for (var i = 0; i < icons.length; i++) {
+        var icon = icons[i];
+        // In bounding rectangle of icon.
+        if (cursor.x && cursor.y && cursor.x > icon.x && cursor.x < icon.x + icon.width
+                && cursor.y > currentY + icon.offset && cursor.y < currentY + icon.offset
+                + icon.height) {
+
+            return icon;
+        }
+        else if (fail) {
+            fail(icon);
+        }
+    }
+    return null;
+};
+
 var animate = function(){
     if (context) {
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -191,6 +209,23 @@ var animate = function(){
                 context.closePath();
                 context.globalAlpha = 1;
 
+                // Only detect gestures if cursor is available.
+                if (cursor.x && cursor.y)
+                    // Gesture detection!!!!
+                    var iconIntersect = iconIntersect(cursor);
+                    // icon specific gesture.
+                    if (iconIntersect) {
+
+                    }
+                    // Global gestures.
+                    else {
+                        // swipe
+                        if (Math.abs(cursor.x - pos[0]) >= 500){
+                            console.log('swipe');
+                        }
+                    }
+                }
+
                 // Keep track of cursor.
                 cursor.x = pos[0];
                 cursor.y = pos[1];
@@ -231,31 +266,25 @@ var animate = function(){
         }
         // If not animating check if cursor is on icon
         else {
-            for (var i = 0; i < icons.length; i++) {
-                var icon = icons[i];
-                // In bounding rectangle of icon.
-                if (cursor.x && cursor.y && cursor.x > icon.x && cursor.x < icon.x + icon.width
-                        && cursor.y > currentY + icon.offset && cursor.y < currentY + icon.offset
-                        + icon.height) {
-                    // if (DEBUG)
-                    //     console.log('OVER ICON', icon.id, new Date() - (icon.time || new Date()));
+            var intersectIcon = iconIntersect(cursor, function(icon){
+                icon.time = null;
+            });
 
-                    if (!icon.time) {
-                        icon.time = new Date();
-                    }
-                    else if (new Date() - icon.time > 1000 && icon.clickHandler) {
-                        if (DEBUG)
-                            console.log('CALLING HANDLER');
-                        icon.clickHandler();
-                        icon.time = null;
-                    }
+            if (intersectIcon) {
+                if (!icon.time) {
+                    icon.time = new Date();
                 }
-                else {
+                else if (new Date() - icon.time > 500 && icon.clickHandler) {
+                    if (DEBUG)
+                        console.log('CALLING HANDLER');
+                    icon.clickHandler();
                     icon.time = null;
                 }
             }
         }
 
+
+        // Draw the icons.
         icons.forEach(function(icon){
             if (icon.customDraw){
                 icon.customDraw(icon, context, currentY);
