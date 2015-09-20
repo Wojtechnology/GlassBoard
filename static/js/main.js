@@ -331,8 +331,8 @@ var init = function(){
 
     if (window.DeviceOrientationEvent) {
         window.addEventListener('deviceorientation', function(evt){
-            if (DEBUG)
-                console.log(evt.gamma, currentY, initialY);
+            // if (DEBUG)
+            //     console.log(evt.gamma, currentY, initialY);
 
             startUpAnimation = startUpAnimation || (evt.gamma < 70
                     && evt.gamma > 50 && currentY <= initialY);
