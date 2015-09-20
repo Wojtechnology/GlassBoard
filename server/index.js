@@ -30,6 +30,7 @@ io.on('connection', function(socket){
 
     socket.on('twiliooutgoing', function (data) {
         //Send an SMS text message
+        console.log('received');
         twclient.sendMessage({
             to: data['to'],
             from: '+16204494106',

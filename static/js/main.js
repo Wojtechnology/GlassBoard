@@ -76,6 +76,8 @@ var scene,
         clickHandler: function(){
             if (replyOpen) {
                 socket.emit('twiliooutgoing', {'body' : replyDialog.text, 'to' : notifications[0].from});
+                console.log(notifications[0].from);
+                replyOpen = false;
                 console.log('SEND');
             }
         },
@@ -819,8 +821,6 @@ var init = function(){
         messages.startUpAnimation = true;
         notifications[0] = msg;
     });
-
-    // socket.emit('twiliooutgoing', {'body' : 'Yofammmmmm', 'to' : '4163170133'});
 
     animate();
 };
