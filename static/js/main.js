@@ -334,8 +334,8 @@ var init = function(){
             // if (DEBUG)
             //     console.log(evt.gamma, currentY, initialY);
 
-            startUpAnimation = startUpAnimation || (evt.gamma < 70
-                    && evt.gamma > 50 && currentY <= initialY);
+            // startUpAnimation = startUpAnimation || (evt.gamma < 70
+            //         && evt.gamma > 50 && currentY <= initialY);
 
         }.bind(this));
     }
