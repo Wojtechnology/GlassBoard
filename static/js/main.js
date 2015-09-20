@@ -180,8 +180,10 @@ var scene,
     animationSpeed = 15,
     replyButton = {
         clickHandler: function(){
-            replyOpen = true;
-            replyStart();
+            replyStart(function(string){
+                replyDialog.text = string.substring(0, 20);
+                replyOpen = true;
+            });
         },
         x: 50,
         y: 50,
@@ -297,7 +299,7 @@ var scene,
         }
     };
 
-var replyStart = function(){
+var replyStart = function(done){
     var recognition = new webkitSpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
@@ -305,7 +307,7 @@ var replyStart = function(){
         console.log(event.results[0][0].transcript);
         var str = event.results[0][0].transcript;
         replyDialog.text = str;
-        return str;
+        done(str);
     }
     recognition.start();
 };
@@ -760,7 +762,7 @@ var init = function(){
 
 window.fbAsyncInit = function() {
     FB.init({
-        appId: (window.location.host === 'localhost:3000') ? '900913696645602' : '900420250028280',
+        appId: (window.location.host === 'localhost:8080') ? '900913696645602' : '900420250028280',
         xfbml: true,
         version: 'v2.4'
     });
