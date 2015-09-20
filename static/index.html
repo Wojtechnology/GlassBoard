@@ -21,6 +21,16 @@
                 display: none;
             }
         </style>
+        <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+        <script type="text/javascript">
+        function callWebSocket() {
+            var socket = io();
+            socket.on('twilioincoming', function(msg){
+                console.log(msg);
+            });
+        }
+        callWebSocket();
+        </script>
     </head>
     <body>
         <div id="webglviewer"></div>
