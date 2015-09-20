@@ -43,12 +43,20 @@ var scene,
         startDownAnimation: false,
         lookingUpTimeout: null
     },
+    replyOpen = false,
     reply = {
         clickHandler: function(){
+            if (!replyOpen) {
+                replyOpen = true;
+                replyStart();
+            }
+
+
             if (notifications.length) {
                 console.log('REPLY');
             }
         },
+        text: '',
         time: null,
         id: 'user',
         x: 10,
@@ -60,7 +68,7 @@ var scene,
         opacity: 1,
         startUpAnimation: false,
         startDownAnimation: false,
-        lookingUpTimeout: null
+        lookingUpTimeout: null,
     },
     user = {
         time: null,
@@ -148,7 +156,8 @@ var scene,
     animationSpeed = 15,
     replyButton = {
         clickHandler: function(){
-
+            replyOpen = true;
+            replyStart();
         },
         x: 50,
         y: 50,
@@ -159,6 +168,46 @@ var scene,
     buttons = [user, messages, email, replyButton, cancel, reply],
     openDialog = false,
     dialogScale = 0,
+
+    replyDialog = {
+        text: "",
+        width: 420,
+        height: 150,
+        x: 50,
+        y: 50,
+        internalDraw: function(getDim, context, text, dialogScale){
+            if (dialogScale !== 1.0) {
+                return;
+            }
+            var titleDim = getDim(20, 25);
+            context.font = '20px Avenir';
+            context.fillStyle = '#333';
+            context.font = '15px Avenir';
+            var msgDim = getDim(20, 60);
+            context.fillText(text, msgDim.x, msgDim.y);
+
+            // Add reply and cancel buttons.
+            context.globalAlpha = 0.75;
+
+            var replyDim = getDim(355, 5, 40, 20);
+            reply.width = replyDim.width;
+            reply.height = replyDim.height;
+            reply.x = replyDim.x;
+            reply.y = replyDim.y;
+            context.drawImage(reply.img, reply.x, reply.y, reply.width, reply.height);
+
+            var cancelDim = getDim(355, 35, 40, 20);
+            cancel.width = cancelDim.width;
+            cancel.height = cancelDim.height;
+            cancel.x = cancelDim.x;
+            cancel.y = cancelDim.y;
+            context.drawImage(cancel.img, cancel.x, cancel.y, cancel.width, cancel.height);
+
+            context.globalAlpha = 1;
+
+        }
+    };
+
     dialog = {
         text: notifications[0],
         width: 420,
@@ -198,6 +247,19 @@ var scene,
 
         }
     };
+
+var replyStart = function(){
+    var recognition = new webkitSpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.onresult = function(event) { 
+        console.log(event.results[0][0].transcript);
+        var str = event.results[0][0].transcript;
+        replyDialog.text = str;
+        return str;
+    }
+    recognition.start();
+};
 
 var nextPowerOf2 = function(x){
     return Math.pow(2, Math.ceil(Math.log(x) / Math.log(2)));
@@ -445,11 +507,35 @@ var animate = function(){
             }, context, notifications[0].from, notifications[0].body, dialogScale);
         }
 
+        if (replyOpen){
+            replyDialog.internalDraw(function(x, y, width, height){
+                var output = {};
+                if (typeof x === 'number'){
+                    output.x = dialog.x + x;
+                }
+
+                if (typeof y === 'number'){
+                    output.y = dialog.y + y;
+                }
+
+                if (typeof width === 'number') {
+                    output.width = width*dialogScale;
+                }
+
+                if (typeof height === 'number') {
+                    output.height = height * dialogScale;
+                }
+
+                return output;
+            }, context, replyDialog.text, dialogScale);
+
+        }
+
         for(var i = 0; i < buttons.length; i++){
             var button = buttons[i];
             // click handlers
             var intersect = buttonIntersect(button, cursor);
-            console.log('Intersect!', intersect);
+            //console.log('Intersect!', intersect);
 
             if (intersect) {
                 if (!button.time) {
@@ -472,6 +558,18 @@ var animate = function(){
 }
 
 var init = function(){
+
+    //remove later
+
+            for (var i = 0; i < icons.length; i++) {
+        var icon = icons[i];
+        icon.startUpAnimation = true;
+        //    var icon = icons[i];
+        //    icon.startUpAnimation = icon.startUpAnimation || (evt.gamma < 70
+        //        && evt.gamma > 50 && icon.y <= initialY);
+    }
+
+
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.001, 700);
     camera.position.set(0, 15, 200);
