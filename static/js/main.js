@@ -156,6 +156,24 @@ var fullscreen = function(){
     }
 }
 
+// fail - fn to run if icon doesnt intersect.
+var iconIntersect = function(cursor, fail){
+    for (var i = 0; i < icons.length; i++) {
+        var icon = icons[i];
+        // In bounding rectangle of icon.
+        if (cursor.x && cursor.y && cursor.x > icon.x && cursor.x < icon.x + icon.width
+                && cursor.y > currentY + icon.offset && cursor.y < currentY + icon.offset
+                + icon.height) {
+
+            return icon;
+        }
+        else if (fail) {
+            fail(icon);
+        }
+    }
+    return null;
+};
+
 var doSetTimeout = function(icon) {
     icon.lookingUpTimeout = setTimeout(function() {
         if (DEBUG)
@@ -163,6 +181,12 @@ var doSetTimeout = function(icon) {
         icon.startDownAnimation = true;
     }, 10000);
 }
+
+var
+
+
+
+
 
 var animate = function(){
     if (context) {
@@ -263,28 +287,25 @@ var animate = function(){
             }
             // If not animating check if cursor is on icon
             else {
-                // In bounding rectangle of icon.
-                if (cursor.x && cursor.y && cursor.x > icon.x && cursor.x < icon.x + icon.width
-                        && cursor.y > icon.y && cursor.y < icon.y + icon.height) {
-                    if (DEBUG)
-                        console.log('OVER ICON', icon.id, new Date() - (icon.time || new Date()));
+                var intersectIcon = iconIntersect(cursor, function(icon){
+                    icon.time = null;
+                });
 
+                if (intersectIcon) {
                     if (!icon.time) {
                         icon.time = new Date();
                     }
-                    else if (new Date() - icon.time > 1000 && icon.clickHandler) {
+                    else if (new Date() - icon.time > 500 && icon.clickHandler) {
                         if (DEBUG)
                             console.log('CALLING HANDLER');
                         icon.clickHandler();
                         icon.time = null;
                     }
                 }
-                else {
-                    icon.time = null;
-                }
             }
         }
 
+        // Draw the icons.
         icons.forEach(function(icon){
             if (icon.customDraw){
                 icon.customDraw(icon, context, icon.y);
@@ -440,9 +461,6 @@ var init = function(){
 
     animate();
 };
-
-
-// init();
 
 window.fbAsyncInit = function() {
     FB.init({
