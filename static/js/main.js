@@ -157,7 +157,7 @@ var fullscreen = function(){
 }
 
 // fail - fn to run if icon doesnt intersect.
-var iconIntersect = function(cursor, fail){
+var buttonIntersect = function(cursor, fail){
     for (var i = 0; i < icons.length; i++) {
         var icon = icons[i];
         // In bounding rectangle of icon.
@@ -280,7 +280,7 @@ var animate = function(){
             }
             // If not animating check if cursor is on icon
             else {
-                var intersectIcon = iconIntersect(cursor, function(icon){
+                var intersectIcon = buttonIntersect(cursor, function(icon){
                     icon.time = null;
                 });
 
