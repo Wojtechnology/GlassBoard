@@ -197,7 +197,7 @@ var scene,
         height: 150,
         x: 50,
         y: 50,
-        internalDraw: function(getDim, context, text, dialogScale){
+        internalDraw: function(getDim, context, to, text, dialogScale){
             if (dialogScale !== 1.0) {
                 return;
             }
@@ -206,7 +206,11 @@ var scene,
             context.fillStyle = '#333';
             context.font = '15px Avenir';
             var msgDim = getDim(20, 60);
+
+            context.fillText('To: ' + to, titleDim.x, titleDim.y);
+
             context.fillText(text, msgDim.x, msgDim.y);
+
 
             // Add reply and cancel buttons.
             context.globalAlpha = 0.75;
@@ -243,7 +247,7 @@ var scene,
             var titleDim = getDim(20, 25);
             context.font = '20px Avenir';
             context.fillStyle = '#333';
-            context.fillText(from, titleDim.x, titleDim.y);
+            context.fillText('From: '+ from, titleDim.x, titleDim.y);
             context.font = '15px Avenir';
             var msgDim = getDim(20, 60);
             context.fillText(text, msgDim.x, msgDim.y);
@@ -558,7 +562,7 @@ var animate = function(){
                 }
 
                 return output;
-            }, context, replyDialog.text, 1);
+            }, context, notifications[0].from, replyDialog.text, 1);
 
         }
 
