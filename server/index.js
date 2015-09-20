@@ -13,8 +13,8 @@ app.use(express.static('static'));
 
 app.post('/incoming', function (req, res) {
 	console.log('Received Incoming')
-	var body = req.param('Body').trim();
-	io.emit('twilioincoming', body);
+	console.log(req)
+	io.emit('twilioincoming', 'Hello');
 	res.send('');
 });
 
