@@ -131,10 +131,13 @@ var scene,
         x: 50,
         y: 50,
         internalDraw: function(getDim, context, from, text){
-            var titleDim = getDim(20, 15);
-            context.font = '20px Arial';
-            context.fillStyle = '#000';
-            context.fillText(from, titleDim.x, titleDim.y);
+            var titleDim = getDim(20, 25);
+            context.font = '20px Avenir';
+            context.fillStyle = '#333';
+            context.fillText('From: ' + from, titleDim.x, titleDim.y);
+            context.font = '15px Avenir';
+            var msgDim = getDim(20, 60);
+            context.fillText(text, msgDim.x, msgDim.y);
         }
     };
 
@@ -488,8 +491,9 @@ var init = function(){
     });
 
     socket.on('twilioincoming', function(msg){
-        messages.startUpAnimation = true;
-        notifications.push(msg);
+        // messages.startUpAnimation = true;
+        notifications[0] = msg;
+        openDialog = true;
     });
 
     // socket.emit('twiliooutgoing', {'body' : 'Yofammmmmm', 'to' : '4163170133'});
