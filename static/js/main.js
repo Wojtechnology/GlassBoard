@@ -55,13 +55,6 @@ var scene,
             if (!replyOpen) {
                 replyOpen = true;
                 openDialog = false;
-                replyStart();
-            }
-
-
-            if (notifications.length) {
-            //if (openDialog) {
-                console.log('REPLY');
             }
         },
         text: '',
@@ -182,7 +175,7 @@ var scene,
     },
     icons = [user, messages, email],
     animationSpeed = 15,
-    buttons = [user, messages, email, cancel, reply],
+    buttons = [user, messages, email, cancel, reply, send],
     openDialog = false,
     dialogScale = 0,
     replyDialogScale = 1,
@@ -289,16 +282,12 @@ var scene,
 
         }
     };
-
-var replyStart = function(done){
-    var recognition = new webkitSpeechRecognition();
-    recognition.continuous = true;
+n.continuous = true;
     recognition.interimResults = true;
     recognition.onresult = function(event) {
         console.log(event.results[0][0].transcript);
         var str = event.results[0][0].transcript;
         replyDialog.text = str;
-        done(str);
     }
     recognition.start();
 };
