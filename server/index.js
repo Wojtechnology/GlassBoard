@@ -1,6 +1,7 @@
 var morgan = require('morgan');
-
+var twilio = require('twilio');
 var express = require('express');
+var bodyParser = require('body-parser')
 var app = express();
 
 // Websocket stuff
@@ -8,13 +9,14 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 app.use(morgan('dev'));
-
 app.use(express.static('static'));
+app.use(bodyParser.urlencoded({ extended: false }))
 
 app.post('/incoming', function (req, res) {
 	console.log('Received Incoming')
-	var body = req.param('Body').trim();
-	io.emit('twilioincoming', body);
+    var body = req.body['Body'];
+    var from = req.body['From'];
+	io.emit('twilioincoming', {'body': body, 'from': from});
 	res.send('');
 });
 
