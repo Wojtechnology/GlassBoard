@@ -8,6 +8,7 @@ var scene,
     canvas,
     context,
     detector,
+    recognition,
     socket = io(),
     lookingUp = false,
     initialY = -100,
@@ -79,6 +80,7 @@ var scene,
                 console.log(notifications[0].from);
                 replyOpen = false;
                 console.log('SEND');
+                recognition.stop();
             }
         },
         time: null,
@@ -287,7 +289,7 @@ var scene,
     };
 
 var replyStart = function(done){
-    var recognition = new webkitSpeechRecognition();
+    recognition = new webkitSpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.onresult = function(event) {
