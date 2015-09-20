@@ -25,18 +25,13 @@ io.on('connection', function(socket){
     console.log('a user connected');
 
     socket.on('twiliooutgoing', function (data) {
-        console.log(data);
-
         //Send an SMS text message
         twclient.sendMessage({
-
-            to: data['to'], // Any number Twilio can deliver to
-            from: '+16204494106', // A number you bought from Twilio and can use for outbound communication
-            body: data['body'] // body of the SMS message
-
-        }, function(err, responseData) { //this function is executed when a response is received from Twilio
-
-            if (!err) { // "err" is an error received during the request, if any
+            to: data['to'],
+            from: '+16204494106',
+            body: data['body']
+        }, function(err, responseData) {
+            if (!err) {
                 console.log('Sent ' + responseData.body + ' to ' + responseData.from);
             }
         });
@@ -46,6 +41,6 @@ io.on('connection', function(socket){
 var server = http.listen(process.env.PORT || 3000, function () {
     var host = server.address().address;
     var port = server.address().port;
-
+    
     console.log('Example app listening at http://%s:%s', host, port);
 });
