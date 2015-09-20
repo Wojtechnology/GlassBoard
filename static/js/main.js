@@ -162,8 +162,7 @@ var iconIntersect = function(cursor, fail){
         var icon = icons[i];
         // In bounding rectangle of icon.
         if (cursor.x && cursor.y && cursor.x > icon.x && cursor.x < icon.x + icon.width
-                && cursor.y > currentY + icon.offset && cursor.y < currentY + icon.offset
-                + icon.height) {
+                && cursor.y > icon.y && cursor.y < icon.y + icon.height) {
 
             return icon;
         }
@@ -181,12 +180,6 @@ var doSetTimeout = function(icon) {
         icon.startDownAnimation = true;
     }, 10000);
 }
-
-var
-
-
-
-
 
 var animate = function(){
     if (context) {
