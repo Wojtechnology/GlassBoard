@@ -194,6 +194,26 @@ var scene,
     openDialog = false,
     dialogScale = 0,
     replyDialogScale = 1,
+    confirmationShow = false,
+    confirmationScale = false,
+    confirmationDialog = {
+        width: 420,
+        height: 100,
+        x: 50,
+        y: 50,
+        internalDraw: function(getDim, context, to, text, dialogScale){
+            if (dialogScale !== 1.0) {
+                return;
+            }
+            var titleDim = getDim(20, 25);
+            context.font = '20px Avenir';
+            context.fillStyle = '#333';
+            context.font = '15px Avenir';
+            var msgDim = getDim(40, 60);
+
+            context.fillText('Sent!', titleDim.x, titleDim.y);
+        }
+    },
 
     replyDialog = {
         text: "",
@@ -282,7 +302,7 @@ var replyStart = function(){
     var recognition = new webkitSpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
-    recognition.onresult = function(event) { 
+    recognition.onresult = function(event) {
         console.log(event.results[0][0].transcript);
         var str = event.results[0][0].transcript;
         replyDialog.text = str;
@@ -537,8 +557,22 @@ var animate = function(){
             }, context, notifications[0].from, notifications[0].body, dialogScale);
         }
 
+
+        if (replyOpen && replyDialog && replyDialogScale <= 1.0) {
+            replyDialogScale += 0.1;
+            if (replyDialogScale >= 1) {
+                replyDialogScale = 1;
+            }
+        }
+        else if (!replyOpen && replyDialog && replyDialogScale >= 0) {
+            replyDialogScale -= 0.1;
+            if (replyDialogScale <= 0) {
+                replyDialogScale = 0;
+            }
+        }
+
         if (replyOpen){
-           
+
             context.globalAlpha = 0.8;
             context.beginPath();
             context.rect(replyDialog.x, replyDialog.y,
@@ -567,6 +601,54 @@ var animate = function(){
 
                 return output;
             }, context, notifications[0].from, replyDialog.text, 1);
+
+        }
+
+
+
+        if (confirmationShow && confirmationDialog && confirmationScale <= 1.0) {
+            confirmationScale += 0.1;
+            if (confirmationScale >= 1) {
+                confirmationScale = 1;
+            }
+        }
+        else if (!confirmationShow && confirmationDialog && confirmationScale >= 0) {
+            confirmationScale -= 0.1;
+            if (confirmationScale <= 0) {
+                confirmationScale = 0;
+            }
+        }
+
+        if (confirmationShow){
+
+            context.globalAlpha = 0.8;
+            context.beginPath();
+            context.rect(confirmationDialog.x, confirmationDialog.y,
+            confirmationDialog.width * confirmationScale, confirmationDialog.height * confirmationScale);
+            context.fillStyle = '#fff';
+            context.fill();
+            context.closePath();
+            context.globalAlpha = 1;
+            confirmationDialog.internalDraw(function(x, y, width, height){
+                var output = {};
+                if (typeof x === 'number'){
+                    output.x = confirmationDialog.x + x;
+                }
+
+                if (typeof y === 'number'){
+                    output.y = confirmationDialog.y + y;
+                }
+
+                if (typeof width === 'number') {
+                    output.width = width;
+                }
+
+                if (typeof height === 'number') {
+                    output.height = height;
+                }
+
+                return output;
+            }, context, '', confirmationDialog.text, 1);
 
         }
 
