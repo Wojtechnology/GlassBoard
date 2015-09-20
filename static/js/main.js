@@ -243,8 +243,8 @@ var animate = function(){
                 if (cursor.x && cursor.y && cursor.x > icon.x && cursor.x < icon.x + icon.width
                         && cursor.y > currentY + icon.offset && cursor.y < currentY + icon.offset
                         + icon.height) {
-                    if (DEBUG)
-                        console.log('OVER ICON', icon.id, new Date() - (icon.time || new Date()));
+                    // if (DEBUG)
+                    //     console.log('OVER ICON', icon.id, new Date() - (icon.time || new Date()));
 
                     if (!icon.time) {
                         icon.time = new Date();
