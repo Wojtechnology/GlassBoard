@@ -18,6 +18,10 @@ var scene,
         body: 'Yofammmmmm',
         from: '6133848944'
     }],
+    detectFaces = false,
+    lastFacePos,
+    reqLock = false,
+    displayName = '',
     cursor = {
         x: -1,
         y: -1,
@@ -412,6 +416,87 @@ var animate = function(){
                 lastPos = null;
                 cursor.x = null;
                 cursor.y = null;
+            }
+
+            if (video.videoWidth > 0 && detectFaces) {
+                if (!detector) {
+                    var width = video.videoWidth;
+                    var height = video.videoHeight;
+                    detector = new objectdetect.detector(width, height, 1.1, objectdetect.frontalface);
+                }
+
+                var coords = detector.detect(video, 1, 8);
+
+                if (coords[0]) {
+                    var coord = coords[0];
+
+                    // Rescale coordinates from detector to video coordinate space:
+                    coord[0] *= video.videoWidth / detector.canvas.width;
+                    coord[1] *= video.videoHeight / detector.canvas.height;
+                    coord[2] *= video.videoWidth / detector.canvas.width;
+                    coord[3] *= video.videoHeight / detector.canvas.height;
+
+                    var facePos = [coord[0] + coord[2] / 2, coord[1] + coord[3] / 2];
+                    var faceDelta = [0, 0];
+
+                    if (lastFacePos) {
+                        faceDelta = [facePos[0] - lastFacePos[0], facePos[1] - lastFacePos[1]];
+
+                        if(faceDelta[0] * faceDelta[0] < 10 && faceDelta[1] * faceDelta[1] < 10) {
+
+                            if (!reqLock) {
+                                var dataURL = canvas.toDataURL();
+                                var blobBin = atob(dataURL.split(',')[1]);
+                                var array = [];
+                                for(var i = 0; i < blobBin.length; i++) {
+                                    array.push(blobBin.charCodeAt(i));
+                                }
+                                var file=new Blob([new Uint8Array(array)], {type: 'image/png'});
+
+                                var formdata = new FormData();
+                                formdata.append("img", file);
+                                jQuery.ajax({
+                                   url: "http://apius.faceplusplus.com/detection/detect?api_key=46c459a8420ac293d55014b109fff14d&api_secret=cWOy2uq37zEOHaqWzI-KoPz8J1L5Ga35 ",
+                                   type: "POST",
+                                   data: formdata,
+                                   processData: false,
+                                   contentType: false,
+                                }).done(function(respond){
+                                    var race = respond.face[0].attribute.race.value;
+                                    if (race === 'White') displayName = 'Wojtek';
+                                    else displayName = 'Jack';
+                                });
+                                reqLock = true;
+                                setTimeout(function() {
+                                    reqLock = false;
+                                    displayName = '';
+                                }, 3000);
+                            }
+
+                        }
+                    }
+                    lastFacePos = facePos;
+                    if (reqLock) {
+
+                        // Draw coordinates on video overlay:
+                        /*context.beginPath();
+                        context.lineWidth = '2';*/
+                        context.fillStyle = lastFacePos ? 'rgba(0, 255, 255, 0.5)' : 'rgba(255, 0, 0, 0.5)';
+                        /*context.fillRect(
+                            coord[0] / video.videoWidth * canvas.width,
+                            coord[1] / video.videoHeight * canvas.height,
+                            coord[2] / video.videoWidth * canvas.width,
+                            coord[3] / video.videoHeight * canvas.height);
+                        context.stroke();*/
+                        context.font = '30px Avenir';
+                        context.fillText(displayName, coord[0] / video.videoWidth * canvas.width +
+                            coord[2] / video.videoWidth * canvas.width / 2 - 30,
+                            coord[1] / video.videoHeight * canvas.height +
+                            coord[3] / video.videoHeight * canvas.height + 15);
+                    }
+                } else {
+                    lastFacePos = null;
+                }
             }
         }
 
