@@ -1,9 +1,9 @@
-Jarvis
+GlassBoard
 =============
-Iron man like stock infmoration in augmented reality.
+Google glass on Google cardboard.
 
 ## Running locally
 
 - `npm i`
 - `npm start`
-- Visit localhost:3000
+- Visit localhost:8080
