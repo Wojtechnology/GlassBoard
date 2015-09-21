@@ -8,6 +8,7 @@ var scene,
     canvas,
     context,
     detector,
+    recognition,
     socket = io(),
     lookingUp = false,
     initialY = -100,
@@ -76,7 +77,10 @@ var scene,
         clickHandler: function(){
             if (replyOpen) {
                 socket.emit('twiliooutgoing', {'body' : replyDialog.text, 'to' : notifications[0].from});
+                console.log(notifications[0].from);
+                replyOpen = false;
                 console.log('SEND');
+                recognition.stop();
             }
         },
         time: null,
@@ -285,7 +289,7 @@ var scene,
     };
 
 var replyStart = function(done){
-    var recognition = new webkitSpeechRecognition();
+    recognition = new webkitSpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.onresult = function(event) {
@@ -819,8 +823,6 @@ var init = function(){
         messages.startUpAnimation = true;
         notifications[0] = msg;
     });
-
-    // socket.emit('twiliooutgoing', {'body' : 'Yofammmmmm', 'to' : '4163170133'});
 
     animate();
 };
